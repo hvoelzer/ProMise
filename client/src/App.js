@@ -1,5 +1,4 @@
-import React, {useState, useEffect} from "react";
-import {Form, Input, Button} from "semantic-ui-react"
+import React, { useState, useEffect } from "react";
 
 function App() {
   const [file, setFile] = useState();
@@ -73,67 +72,74 @@ function App() {
   const headerKeys = Object.keys(Object.assign({}, ...array));
 
   return (
-    <div style={{ textAlign: "center" }}>
-      <h1>REACTJS CSV IMPORT EXAMPLE </h1>
-      <Form>
-        <Form.Field>
-          <Input
-            type={"file"}
-            id={"csvFileInput"}
-            accept={".csv"}
-            onChange={handleOnChangeFile}
-          />
-        </Form.Field>
-        <Form.Field>
-          <Input
-            type={"text"}
-            id={"timeStampInput"}
-            placeholder="Timestamp Formatting String"
-            onChange={handleOnChangeTimeStampString}
-          />
-        </Form.Field>
-        <Form.Field>
-          <Input
-              type={"number"}
-              id={"timeStampColumn"}
-              placeholder="Timestamp Column"
-              onChange={handleOnChangeTimeStampColumn}
-            />
-        </Form.Field>
-        <Form.Field>
-          <Input
-              type={"number"}
-              id={"activityColumn"}
-              placeholder="Activity Column"
-              onChange={handleOnChangeActivityColumn}
-            />
-        </Form.Field>
-        <Form.Field>
-          <Input
-              type={"number"}
-              id={"traceColumn"}
-              placeholder="Trace Column"
-              onChange={handleOnChangeTraceColumn}
-            />
-        </Form.Field>
-        <Form.Field>
-          <Input
-              type={"text"}
-              id={"separator"}
-              placeholder="Separator"
-              onChange={handleOnChangeSeparator}
-            />
-        </Form.Field>
-        <Form.Field>
-          <Button
-            onClick={(e) => {
-              handleOnSubmit(e);
-            }}
-          >
-            IMPORT CSV
-          </Button>
-        </Form.Field>
-      </Form>
+    <div >
+      <h1>IMPORT RAW EVENTLOG </h1>
+      <form>
+      <table>
+        <tr>
+        <td><label> CSV File </label></td>
+        <td><input
+          type={"file"}
+          id={"csvFileinput"}
+          accept={".csv"}
+          onChange={handleOnChangeFile}
+        /></td>
+        </tr>
+        <tr>
+        <label> Separator </label>
+        <td><input
+          type={"text"}
+          id={"separator"}
+          placeholder="Separator"
+          onChange={handleOnChangeSeparator}
+        /></td>
+        </tr>
+        <tr>
+        <label> Timestamp formatting String </label>
+        <td><input
+          type={"text"}
+          id={"timeStampinput"}
+          placeholder="Timestamp formatting String"
+          onChange={handleOnChangeTimeStampString}
+        /></td>
+        </tr>
+        <tr>
+        <label> Timestamp Column </label>
+        <td><input
+          type={"number"}
+          id={"timeStampColumn"}
+          placeholder="Timestamp Column"
+          onChange={handleOnChangeTimeStampColumn}
+        /></td>
+        </tr>
+        <tr>
+        <label> Activity Column </label>
+        <td><input
+          type={"number"}
+          id={"activityColumn"}
+          placeholder="Activity Column"
+          onChange={handleOnChangeActivityColumn}
+        /></td>
+        </tr>
+        <tr>
+        <label> Trace Column </label>
+        <td><input
+          type={"number"}
+          id={"traceColumn"}
+          placeholder="Trace Column"
+          onChange={handleOnChangeTraceColumn}
+        /></td>
+        </tr>
+        <label>  </label>
+        <td><button
+          onClick={(e) => {
+            handleOnSubmit(e);
+          }}
+        >
+          IMPORT CSV
+        </button></td>
+        </table>
+      </form>
 
       <br />
 
