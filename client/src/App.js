@@ -1,4 +1,9 @@
+//import './App.css';
 import React, { useState, useEffect } from "react";
+
+import { Link } from "react-router-dom";
+
+import GraphView from "./components/GraphView";
 
 function App() {
   const [file, setFile] = useState();
@@ -140,6 +145,7 @@ function App() {
         </button></td>
         </table>
       </form>
+      <Link to="/graph-view"> GO TO Graph View</Link>
 
       <br />
 
