@@ -5,7 +5,6 @@ import {
 
   Routes,
   Route,
-  Navigate,
 
 } from "react-router-dom";
   
@@ -13,6 +12,8 @@ import {
 import ImportPage from "./components/ImportPage";
 // import GraphView
 import GraphView from "./components/GraphView";
+// import NotFound
+import NotFound from "./components/NotFound";
 
   
 function App() {
@@ -33,7 +34,7 @@ function App() {
           {/* If any route mismatches the upper 
           route endpoints then, redirect triggers 
           and redirects app to home component with to="/" */}
-        
+          <Route path="/*" element={<NotFound/>} />
         </Routes>
 
     </>

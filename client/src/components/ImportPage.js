@@ -3,8 +3,6 @@ import React, { useState, useEffect } from "react";
 
 import { Link } from "react-router-dom";
 
-import GraphView from "./GraphView";
-
 function ImportPage() {
   const [file, setFile] = useState();
   const [timeStampString, setTimeStampString] = useState();
@@ -18,31 +16,32 @@ function ImportPage() {
 
   const handleOnChangeFile = (e) => {
     setFile(e.target.files[0]);
+    handleOnSubmit(e);
   };
 
   const handleOnChangeTimeStampString = (e) => {
-    console.log(e.target.value)
     setTimeStampString(e.target.value);
+    handleOnSubmit(e);
   };
 
   const handleOnChangeTimeStampColumn = (e) => {
-    console.log(e.target.value)
     setTimeStampColumn(e.target.value);
+    handleOnSubmit(e);
   };
 
   const handleOnChangeActivityColumn = (e) => {
-    console.log(e.target.value)
     setActivityColumn(e.target.value);
+    handleOnSubmit(e);
   };
 
   const handleOnChangeTraceColumn = (e) => {
-    console.log(e.target.value)
     setTraceColumn(e.target.value);
+    handleOnSubmit(e);
   };
 
   const handleOnChangeSeparator = (e) => {
-    console.log(e.target.value)
     setSeparator(e.target.value);
+    handleOnSubmit(e);
   };
 
   const csvFileToArray = string => {
@@ -137,8 +136,18 @@ function ImportPage() {
         </tr>
         <label>  </label>
         <td><button
-          onClick={(e) => {
-            handleOnSubmit(e);
+          onClick={async () => {
+            const response = await fetch("/import_raw_data", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify(file)
+            });
+
+            if (response.ok) {
+              console.log("response worked!");
+            }
           }}
         >
           IMPORT CSV
@@ -146,7 +155,6 @@ function ImportPage() {
         </table>
       </form>
       <li>
-
       <Link to="/graph-view"> GO TO Graph View</Link>
       </li>
 
