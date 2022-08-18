@@ -145,7 +145,10 @@ function ImportPage() {
         </button></td>
         </table>
       </form>
+      <li>
+
       <Link to="/graph-view"> GO TO Graph View</Link>
+      </li>
 
       <br />
 
