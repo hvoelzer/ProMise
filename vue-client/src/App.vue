@@ -1,0 +1,146 @@
+<template>
+  <div >
+      <h1>IMPORT RAW EVENTLOG </h1>
+      <form v-on:submit.prevent="submitForm">
+      <table>
+        <tr>
+        <td><label> CSV File </label></td>
+        <td><input type="file" accept=".csv" @change="handleFileUpload( $event )"/></td>
+        </tr>
+        <tr>
+        <label> Separator </label>
+        <td><input
+           type="text"
+          v-model="form.seperator"
+          placeholder="Separator"
+         
+        /></td>
+        </tr>
+        <tr>
+        <label> Timestamp formatting String </label>
+        <td><input
+          type="text"
+          v-model="form.timestampformat"
+          placeholder="H:M:S"
+          
+        /></td>
+        </tr>
+        <tr>
+        <label> Timestamp Column </label>
+        <td><input
+          type="number"
+          v-model="form.timestampcolumn"
+   
+         
+        /></td>
+        </tr>
+        <tr>
+        <label> Activity Column </label>
+        <td><input
+          type="number"
+          v-model="form.activitycolumn"
+        /></td>
+        </tr>
+        <tr>
+        <label> Trace Column </label>
+        <td><input
+          type="number"
+          v-model="form.tracecolumn"
+        /></td>
+        </tr>
+        <label>  </label>
+        <td><button type="submit" >Submit</button></td>
+        </table>
+      </form>
+      
+
+      <br />
+
+     <table v-if="form.parsed" style="width: 100%;">
+    <thead>
+        <tr>
+            <th v-for="(header, key) in form.content.meta.fields"
+                v-bind:key="'header-'+key">
+                {{ header }}
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr v-for="(row, rowKey) in form.content.data"
+            v-bind:key="'row-'+rowKey">
+                <td v-for="(column, columnKey) in form.content.meta.fields"
+                    v-bind:key="'row-'+rowKey+'-column-'+columnKey">
+                        <input v-model="form.content.data[rowKey][column]"/>
+                </td>
+        </tr>
+    </tbody>
+</table>
+    </div>
+</template>
+
+<script>
+import Papa from 'papaparse';
+
+
+export default {
+  name: 'App',
+  components: {
+
+  },
+  data(){
+    return {
+      form: {
+        seperator: "",
+        timestampformat : "",
+        tracecolumn: 0,
+        activitycolumn: 0,
+        timestampcolumn: 0,
+        file: '',
+        content: [],
+        parsed: false
+      }
+    }
+  },
+  methods: {
+    parseFile(){
+    Papa.parse( this.form.file, {
+        header: true,
+        skipEmptyLines: true,
+        complete: function( results ){
+            this.form.content = results;
+            this.form.parsed = true;
+        }.bind(this)
+    } );
+},
+    handleFileUpload( event ){
+    this.form.file = event.target.files[0];
+    this.parseFile();
+},
+    submitForm(){
+      console.log(this.form)
+      try {
+
+        this.axios.post(this.$backend.getUrlData(),this.form)
+        .then(() => {
+          this.form.seperator = ""
+          console.log("SUCCESS")
+        })
+      }
+      catch (e) {
+        console.log(e);
+      }
+    }
+  },
+}
+</script>
+
+<style>
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: left;
+  color: #2c3e50;
+  margin-top: 40px;
+}
+</style>
