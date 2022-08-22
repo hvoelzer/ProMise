@@ -1,7 +1,11 @@
+
+
 from flask import Flask, request
 from flask_cors import CORS
+from control import Control
 
 
+control = Control()
 app = Flask(__name__)
 CORS(app)
 # Members API Route
@@ -15,7 +19,9 @@ def home():
 @app.route("/import_raw_data", methods=['POST'])
 def import_raw_data():
     file = request.get_json()
-    print(file["content"]["data"])
+    control.load_rawfile(file)
+
+    print("done")
 
     return "Done", 201
 

@@ -91,10 +91,10 @@ export default {
     return {
       form: {
         seperator: "",
-        timestampformat : "",
+        timestampformat : "%H:%M:%S",
         tracecolumn: 0,
-        activitycolumn: 0,
-        timestampcolumn: 0,
+        activitycolumn: 2,
+        timestampcolumn: 1,
         file: '',
         content: [],
         parsed: false
