@@ -6,10 +6,13 @@ class Node: #alias Log
         self.eventLog = eventLog
         self.children = []
         self.parents = []
-        self.hash = self.hashNode(eventLog)
+        self.hash = self.hashNode()
 
-    def hashNode(eventLog):
-        hash = 2 #all equivalent event-log must have the same hash
+    def hashNode(self):
+        hash = ""
+        traces = self.eventLog.traces # TODO maybe since the order of the traces should not matter they should be ordered with respect to the alphabetical order of the ids
+        for trace in traces:
+            hash += trace.getHash() # NOTE all equivalent event-log must have the same hash
         return hash
 
     def addChildren(self, node):
@@ -22,8 +25,8 @@ class Node: #alias Log
 class Graph:
 
     def __init__(self, eventLog):
-        self.root = Node(eventLog)  #maybe it is not needed
-        self.currentNode = self.root
+        self.root = Node(eventLog.copy())  #maybe it is not needed
+        self.currentNode = Node(eventLog)
         self.nodes = [self.root]
 
     #Whenever a diff (filter) is created we need to generate a new node
