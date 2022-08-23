@@ -49,7 +49,7 @@
         /></td>
         </tr>
         <label>  </label>
-        <td><button type="submit" >Submit</button></td>
+        <td><button type="submit">Submit</button></td>
         </table>
       </form>
       
@@ -91,10 +91,10 @@ export default {
     return {
       form: {
         seperator: "",
-        timestampformat : "%H:%M:%S",
+        timestampformat : "",
         tracecolumn: 0,
-        activitycolumn: 2,
-        timestampcolumn: 1,
+        activitycolumn: 0,
+        timestampcolumn: 0,
         file: '',
         content: [],
         parsed: false
