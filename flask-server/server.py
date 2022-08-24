@@ -19,11 +19,15 @@ def home():
 @app.route("/import_raw_data", methods=['POST'])
 def import_raw_data():
     file = request.get_json()
-    control.load_rawfile(file)
+    control.loadRawfile(file)
 
     print("done")
 
     return "Done", 201
+
+@app.route("/get_graph", methods=['GET'])
+def get_graph():
+    return control.getEdgesAsJson()
 
 
 if __name__ == "__main__":

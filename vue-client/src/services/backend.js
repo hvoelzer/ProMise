@@ -8,4 +8,8 @@ export default class Backend{
         return this.url + "/import_raw_data"
     }
 
+    getGraph(){
+        return this.url + "/get_graph"
+    }
+
 }

@@ -17,7 +17,6 @@ class Event:
     def copy(self):
         return Event(self.time, self.activity, self.resources)
 
-
 class Trace:
     def __init__(self, id):
         self.events = []
@@ -47,15 +46,15 @@ class Trace:
         else:
             return middle
 
-    def removeEvents(indices):
-        pass
-        # TODO remove events in order
+    def removeEvents(self, indices):
+        for counter, index in enumerate(indices):
+            self.events.pop(index - counter)
 
     def __str__(self):
         return f"Trace[id:{self.id}, n_events: {len(self.events)}]"
 
     def getHash(self):
-        return f"{self.id}{len(self.events)}"
+        return f"{self.id}{len(self.events)}" # NOTE The names of the traces matter
 
     def __repr__(self):
         return f"Trace[id:{self.id}, n_events: {len(self.events)}]"
