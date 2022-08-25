@@ -1,6 +1,8 @@
-#An eventLog has to be a set of all traces
+from trie import Trie
+# An eventLog has to be a set of all traces
 
-class Node: #alias Log
+
+class Node:  # alias Log
 
     def __init__(self, eventLog, id):
         self.eventLog = eventLog
@@ -9,40 +11,45 @@ class Node: #alias Log
 
     def hashNode(self):
         hash = ""
-        traces = self.eventLog.traces # NOTE maybe since the order of the traces should not matter they should be ordered with respect to the alphabetical order of the ids
+        # NOTE maybe since the order of the traces should not matter they should be ordered with respect to the alphabetical order of the ids
+        traces = self.eventLog.traces
         for trace in traces:
-            hash += trace.getHash() # NOTE all equivalent event-log must have the same hash
+            hash += trace.getHash()  # NOTE all equivalent event-log must have the same hash
         return hash
-
-class Edge:
-
-    def __init__(self, parentNode, operation, childrenNode):
-        self.parentNode = parentNode
-        self.operation = operation
-        self.childrenNode = childrenNode
 
 
 class Graph:
 
     def __init__(self, eventLog):
-        self.root = Node(eventLog.copy(), 0)  #maybe it is not needed
+        self.root = Node(eventLog.copy(), 0)  # maybe it is not needed
         self.nodes = [self.root]
-        self.edges = []
 
-    #Whenever a diff (filter) is created we need to generate a new node
-    def createNewEdge(self, currentNode, newEventLog, operation):  # operation or diff/filter that has been applied
-        newNodeNotChecked = Node(newEventLog, len(self.nodes)) # NOTE is going to be a problem if we delete nodes
-        newNode = self.checkForMatch(newNodeNotChecked) # check if node already exists
-        self.edges.append(Edge(currentNode, operation, newNode))
+        self.trie = Trie()
+        self.adjecency_graph = [0]
 
+    # Whenever a diff (filter) is created we need to generate a new node
+    # [operation] or list of diff/filter that have been applied in the path
+    def addOperation(self, currentNode, newEventLog, operation):
+        self.trie.insert(operation)
+
+        # NOTE is going to be a problem if we delete nodes
+        newNodeNotChecked = Node(newEventLog, len(self.nodes))
+
+        # check if node already exists
+        newNode = self.checkForMatch(newNodeNotChecked)
+        self.adjecency_graph[currentNode.id].append(
+            (operation[-1], newNode.id))
 
     # returns the new node or the equivalent old one
+
     def checkForMatch(self, newNode):
         for node in self.nodes:
             if node.hash == newNode.hash:
-                if True: # TODO here we need a further check, maybe done line by line in each trace between the two eventlogs
+                if True:  # TODO here we need a further check, maybe done line by line in each trace between the two eventlogs
                     return node
+        # if node does not match with any other node, add an entry to node list and adjacency graph
         self.nodes.append(newNode)
+        self.adjecency_graph.append(newNode)
         return newNode
 
     def getNodefromId(self, id):
@@ -50,5 +57,7 @@ class Graph:
 
     def getEdges(self):
         result = []
-        for edge in self.edges:
-            result.append({"parentNode":edge.parentNode.id, "childrenNode":edge.childrenNode.id, "operation":edge.operation})
+        for node_id, next_nodes in enumerate(self.adjecency_graph):
+            for (operation, next_node_id) in next_nodes:
+                result.append({"parentNode": node_id,
+                              "childrenNode": next_node_id, "operation": operation})
