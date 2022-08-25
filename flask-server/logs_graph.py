@@ -25,7 +25,7 @@ class Graph:
         self.nodes = [self.root]
 
         self.trie = Trie()
-        self.adjecency_graph = [0]
+        self.adjecency_graph = [[]]
 
     # Whenever a diff (filter) is created we need to generate a new node
     # [operation] or list of diff/filter that have been applied in the path
@@ -49,7 +49,7 @@ class Graph:
                     return node
         # if node does not match with any other node, add an entry to node list and adjacency graph
         self.nodes.append(newNode)
-        self.adjecency_graph.append(newNode)
+        self.adjecency_graph.append([])
         return newNode
 
     def getNodefromId(self, id):
