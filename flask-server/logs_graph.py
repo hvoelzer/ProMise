@@ -6,13 +6,13 @@ class Node:  # alias Log
 
     def __init__(self, eventLog, id):
         self.eventLog = eventLog
-        self.hash = self.hashNode()
+        self.hash = self.hashNode(eventLog)
         self.id = id
 
-    def hashNode(self):
+    def hashNode(self, eventLog):
         hash = ""
         # NOTE maybe since the order of the traces should not matter they should be ordered with respect to the alphabetical order of the ids
-        traces = self.eventLog.traces
+        traces = eventLog.traces
         for trace in traces:
             hash += trace.getHash()  # NOTE all equivalent event-log must have the same hash
         return hash
@@ -29,8 +29,9 @@ class Graph:
 
     # Whenever a diff (filter) is created we need to generate a new node
     # [operation] or list of diff/filter that have been applied in the path
-    def addOperation(self, currentNode, newEventLog, operation):
-        self.trie.insert(operation)
+    def addOperation(self, currentNode, newEventLog, operations):
+        print(operations)
+        self.trie.insert(operations)
 
         # NOTE is going to be a problem if we delete nodes
         newNodeNotChecked = Node(newEventLog, len(self.nodes))
@@ -38,7 +39,7 @@ class Graph:
         # check if node already exists
         newNode = self.checkForMatch(newNodeNotChecked)
         self.adjecency_graph[currentNode.id].append(
-            (operation[-1], newNode.id))
+            (operations[-1], newNode.id))
 
     # returns the new node or the equivalent old one
 
@@ -61,3 +62,13 @@ class Graph:
             for (operation, next_node_id) in next_nodes:
                 result.append({"parentNode": node_id,
                               "childrenNode": next_node_id, "operation": operation})
+        return result
+
+    def getCleanGraph(self):
+        result = [{'id': 0, 'nodes': [0]}]
+        self.getCleanGraphRecorsive(1, [0], [0], result)
+            
+    
+    def getCleanGraphRecorsive(self, level, alradyScoutedNodes, nodesFromPreviousLayer, result):
+        for operation, node in self.adjecency_graph[0]:
+            pass

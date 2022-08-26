@@ -12,4 +12,8 @@ export default class Backend{
         return this.url + "/get_graph"
     }
 
+    filter(){
+        return this.url + "/filter"
+    }
+
 }

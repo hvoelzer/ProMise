@@ -1,15 +1,16 @@
 <template>
     <div>
         <h1> I am the Graph View</h1>
-        
+        <CleanGraph :edges="this.edges"/>
     </div>
 </template>
 
 <script>
+import CleanGraph from './CleanGraph.vue';
 export default {
   name: 'App',
   components: {
-
+    CleanGraph
   },
   data(){
     return{
@@ -23,7 +24,6 @@ export default {
             .then((json) => {
             this.edges = json;
             console.log("SUCCESS");
-            console.log(json.data);
             })
         }
         catch (e) {

@@ -22,6 +22,7 @@ class FilterOut(Filter):
                 if event.activity == activityClass:
                     indicesToRemove.append(count)
             trace.removeEvents(indicesToRemove)
+        return eventLog
 
     def getName(self):
         return self.name

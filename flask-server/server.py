@@ -29,6 +29,15 @@ def import_raw_data():
 def get_graph():
     return control.getEdgesAsJson()
 
+@app.route("/filter", methods=['POST'])
+def filter():
+    filter = request.get_json()
+    control.applyFilter(filter)
+
+    print("done")
+
+    return "Done", 201
+
 
 if __name__ == "__main__":
     app.run(debug=True)
