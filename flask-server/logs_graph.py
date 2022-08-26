@@ -65,10 +65,21 @@ class Graph:
         return result
 
     def getCleanGraph(self):
-        result = [{'id': 0, 'nodes': [0]}]
+        result = [{"id": 0, "nodes": [0]}]
         self.getCleanGraphRecorsive(1, [0], [0], result)
+        return result
             
     
     def getCleanGraphRecorsive(self, level, alradyScoutedNodes, nodesFromPreviousLayer, result):
-        for operation, node in self.adjecency_graph[0]:
-            pass
+        nodes = []
+        nodesForNextLayer = []
+        for previousNode in nodesFromPreviousLayer:
+            for operation, node in self.adjecency_graph[previousNode]:
+                if node not in alradyScoutedNodes:
+                    nodes.append(node)
+                    alradyScoutedNodes.append(node)
+                    nodesForNextLayer.append(node)
+        if len(nodes) > 0:
+            result.append({"id": level, "nodes": nodes})
+            self.getCleanGraphRecorsive(level + 1, alradyScoutedNodes, nodesForNextLayer, result)
+        

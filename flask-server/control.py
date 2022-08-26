@@ -38,4 +38,4 @@ class Control():
                 break
 
     def getEdgesAsJson(self):
-        return str({"edges": self.graph.getEdges()})
+        return str({"levels": self.graph.getCleanGraph(), "edges": self.graph.getEdges()}).replace("\'", "\"")
