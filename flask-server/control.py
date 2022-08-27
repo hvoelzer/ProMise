@@ -43,3 +43,10 @@ class Control():
 
     def getEdgesAsJson(self):
         return str({"levels": self.graph.getCleanGraph(), "edges": self.graph.getEdges()}).replace("\'", "\"")
+
+    def getEventLog(self):
+        return str({"logId": self.graph.lastNode, "eventLog": self.graph.getEventLogFromId(self.graph.lastNode)}).replace("\'", "\"")
+
+    def changeLastNode(self, json):
+        print(json)
+        self.graph.lastNode = json["id"]

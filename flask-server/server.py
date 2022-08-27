@@ -38,6 +38,19 @@ def filter():
 
     return "Done", 201
 
+@app.route("/get_event_log", methods=['GET'])
+def get_event_log():
+    return control.getEventLog()
+
+@app.route("/change_selected_node", methods=['POST'])
+def change_selected_node():
+    id = request.get_json()
+    control.changeLastNode(id)
+
+    print("done")
+
+    return "Done", 201
+
 
 if __name__ == "__main__":
     app.run(debug=True)

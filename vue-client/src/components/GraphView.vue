@@ -25,20 +25,19 @@ export default {
   },
   methods: {
     getGraph(){
-        try {
-            this.axios.get(this.$backend.getGraph())
-            .then((json) => {
-            //console.log(json.data)
-            this.edges = json.data;
-            this.drawGraph()
-            //this.$forceUpdate();
-            console.log("SUCCESS");
-            })
-        }
-        catch (e) {
-          this.selectedNode = e
-          console.log(e);
-        }
+      try {
+        this.axios.get(this.$backend.getGraph())
+        .then((json) => {
+        
+          this.edges = json.data;
+          this.drawGraph()
+          
+          console.log("GET GRAPH SUCCEEDED");
+        })
+      }
+      catch (e) {
+        console.log(e);
+      }
     },
     getWidth() {
       return Math.max(
@@ -151,6 +150,19 @@ export default {
         this.svgElementsToRemove.push(arrowpoint)
       }  
     },
+    postChangeOfLog(id){
+      
+      try {
+          this.axios.post(this.$backend.changeSelectedNode(), {"id":id})
+          .then(() => {
+              console.log("CHANGE SELECTED ID IN BACKEND");
+          })
+      }
+      catch (e) {
+          console.log(e);
+      }
+  
+    },
     changeLog(id){
       this.clicks++;
       var oldSelectedNode = document.getElementById(this.selectedNode);
@@ -159,6 +171,7 @@ export default {
       var newSelectedNode = document.getElementById(this.selectedNode);
       newSelectedNode.setAttribute("fill", "aqua")
       this.$emit('changeSelected', id)
+      this.postChangeOfLog(id)
       if (this.clicks === 1) {
         this.timer = setTimeout( () => {
           this.clicks = 0;

@@ -101,7 +101,7 @@ handleFileUpload( event ){
         this.axios.post(this.$backend.getUrlData(),this.form)
         .then(() => {
           this.form.seperator = "";
-          console.log("SUCCESS");
+          console.log("IMPORT SUCCEEDED");
           router.push("/app/graph");
         })
       }

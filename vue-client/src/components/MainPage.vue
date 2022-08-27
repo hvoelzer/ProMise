@@ -22,7 +22,7 @@ export default{
     methods:{
         newSelected(id){
             this.selected = id
-        }
+        },
     }
 }
 </script>

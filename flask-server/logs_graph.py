@@ -17,6 +17,9 @@ class Node:  # alias Log
             hash += trace.getHash()  # NOTE all equivalent event-log must have the same hash
         return hash
 
+    def getEventLog(self):
+        return self.eventLog.getAsList()
+
 
 class Graph:
 
@@ -26,6 +29,7 @@ class Graph:
 
         self.trie = Trie()
         self.adjecency_graph = [[]]
+        self.lastNode = 0
 
     # Whenever a diff (filter) is created we need to generate a new node
     # [operation] or list of diff/filter that have been applied in the path
@@ -40,7 +44,12 @@ class Graph:
         newNode = self.checkForMatch(newNodeNotChecked)
         self.adjecency_graph[currentNode.id].append(
             (operations[-1], newNode.id))
+        self.lastNode = newNode.id
         print(self.adjecency_graph)
+
+    def getEventLogFromId(self, id):
+        node = self.getNodefromId(id)
+        return node.getEventLog()
 
     # returns the new node or the equivalent old one
 

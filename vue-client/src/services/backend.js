@@ -16,4 +16,12 @@ export default class Backend{
         return this.url + "/filter"
     }
 
+    getEventLog(){
+        return this.url + "/get_event_log"
+    }
+
+    changeSelectedNode(){
+        return this.url + "/change_selected_node"
+    }
+
 }
