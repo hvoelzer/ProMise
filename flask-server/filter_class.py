@@ -1,21 +1,38 @@
 from event_log import EventLog
 
+
 class Filter:
 
-    def filter(self, eventLog, *parameters) -> EventLog:
+    def __init__(self, *parameters) -> None:
+        self.parameters = parameters
+        self.name = "NAME not DEFIEND"
+
+    def filter(self, eventLog) -> EventLog:
         pass
 
     def getName(self) -> str:
-        return "NAME not DEFIEND"
+        return self.name + self.parameters[0]
+
+    def __hash__(self):
+        return hash((self.name, self.parameters))
+
+    def __eq__(self, filter) -> bool:
+        return (self.name == filter.name & self.parameters == filter.parameters)
+
+    @staticmethod
+    def generateFilter(*parameters):
+        pass
+
 
 class FilterOut(Filter):
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *parameters):
+        super().__init__(*parameters)
         self.name = "filterOut"
 
-    def filter(self, eventLog, *parameters):
-        activityClass = parameters[0] #probably index 0
+    def filter(self, eventLog):
+        activityClass = self.parameters[0]  # probably index 0
+        print("I am filtering:", self.parameters[0])
         for trace in eventLog.traces:
             indicesToRemove = []
             for count, event in enumerate(trace.events):
@@ -24,5 +41,6 @@ class FilterOut(Filter):
             trace.removeEvents(indicesToRemove)
         return eventLog
 
-    def getName(self):
-        return self.name
+    @staticmethod
+    def generateFilter(*parameters):
+        return FilterOut(*parameters)
