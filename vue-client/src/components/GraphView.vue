@@ -12,7 +12,8 @@ export default {
 
   data(){
     return{
-        edges: {}
+        edges: {},
+        svgElementsToRemove: []
     }
   },
   methods: {
@@ -50,6 +51,11 @@ export default {
       var yParent = parentNode.getAttribute("cy");
       var xChild = parseInt(childNode.getAttribute("cx").replace("%", '')) / 100 * this.getWidth();
       var yChild = childNode.getAttribute("cy");
+      var hypotenuse = Math.sqrt(
+            Math.pow(parseInt(xChild - xParent) , 2) +
+            Math.pow(parseInt(yChild - yParent) , 2)
+            )
+      console.log(hypotenuse)
 
       edge = document.createElementNS("http://www.w3.org/2000/svg", "path");
       console.log("M " + xParent + " " + yParent + " l " + xChild + " " + yChild)
@@ -67,9 +73,12 @@ export default {
 
       mainSvg.appendChild(edge);
       mainSvg.appendChild(label);
+
+      this.svgElementsToRemove.push(edge)
+      this.svgElementsToRemove.push(label)
     },
-    changeLog(){
-      console.log("Hello");
+    changeLog(id){
+      console.log(id);
     },
     drawNode(x, y, id){
       var mainSvg = document.getElementById('mainSvg');
@@ -83,7 +92,7 @@ export default {
       circle.setAttribute("fill", "blue");
       circle.setAttribute("stroke", "black");
       circle.setAttribute("id", id);
-      circle.addEventListener ("click", this.changeLog, false);
+      circle.addEventListener ("click", this.changeLog.bind(null, id), false);
 
       label = document.createElementNS("http://www.w3.org/2000/svg", "text");
       label.setAttribute("x", x + "%");
@@ -93,6 +102,7 @@ export default {
 
       mainSvg.appendChild(circle);
       mainSvg.appendChild(label);
+
     },
     drawGraph(){
       // draw Nodes
@@ -106,14 +116,25 @@ export default {
       document.getElementById('mainSvg').setAttribute("height", 100 + (140 * nLevels)); 
 
       // draw Edges
+      this.drawEdges()
+    },
+    drawEdges(){
+      this.removeOldEdges()
       for(var edge in this.edges.edges){
         this.drawEdge(this.edges.edges[edge].parentNode, this.edges.edges[edge].operation, this.edges.edges[edge].childrenNode)
         console.log(this.edges.edges[edge])
       }
+    },
+    removeOldEdges(){
+      for(var element in this.svgElementsToRemove){
+        document.getElementById('mainSvg').removeChild(this.svgElementsToRemove[element]);
+      }
+      this.svgElementsToRemove = [];
     }
   },
   mounted(){
     this.getGraph();
+    window.addEventListener('resize', this.drawEdges)
   }
 
 }
