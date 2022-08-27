@@ -1,4 +1,4 @@
-from asyncio.windows_events import NULL
+
 import datetime
 
 
@@ -16,6 +16,7 @@ class Event:
 
     def copy(self):
         return Event(self.time, self.activity, self.resources)
+
 
 class Trace:
     def __init__(self, id):
@@ -54,7 +55,8 @@ class Trace:
         return f"Trace[id:{self.id}, n_events: {len(self.events)}]"
 
     def getHash(self):
-        return f"{self.id}{len(self.events)}" # NOTE The names of the traces matter
+        # NOTE The names of the traces matter
+        return f"{self.id}{len(self.events)}"
 
     def __repr__(self):
         return f"Trace[id:{self.id}, n_events: {len(self.events)}]"
@@ -64,6 +66,7 @@ class Trace:
         for event in self.events:
             copyTrace.events.append(event.copy())
         return copyTrace
+
 
 class EventLog:
 
@@ -86,14 +89,16 @@ class EventLog:
     def populateTracesFromCSV(self, csvFile, timestring, timeColumn, activityColumn, traceColumn):
         print(len(csvFile))
         for event in csvFile:
-            if event[list(event.keys())[traceColumn]] != "": # filter out empty lines
-                traceIsPresent, trace = self.traceAlreadyPresent(event[list(event.keys())[traceColumn]])
+            if event[list(event.keys())[traceColumn]] != "":  # filter out empty lines
+                traceIsPresent, trace = self.traceAlreadyPresent(
+                    event[list(event.keys())[traceColumn]])
                 if not traceIsPresent:
                     self.traces.append(trace)
                 trace.addEvent(
-                    self.convert_to_seconds(event[list(event.keys())[timeColumn]], timestring, 18), #time in seconds
-                    event[list(event.keys())[activityColumn]]) # activity
-                    #extra resources need to be added
+                    self.convert_to_seconds(
+                        event[list(event.keys())[timeColumn]], timestring, 18),  # time in seconds
+                    event[list(event.keys())[activityColumn]])  # activity
+                # extra resources need to be added
 
     def __repr__(self):
         string = "EventLog: \n"

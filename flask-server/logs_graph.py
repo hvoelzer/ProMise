@@ -30,7 +30,7 @@ class Graph:
     # Whenever a diff (filter) is created we need to generate a new node
     # [operation] or list of diff/filter that have been applied in the path
     def addOperation(self, currentNode, newEventLog, operations):
-        print(operations)
+        print("TYPE", type(operations))
         self.trie.insert(operations)
 
         # NOTE is going to be a problem if we delete nodes
@@ -40,6 +40,7 @@ class Graph:
         newNode = self.checkForMatch(newNodeNotChecked)
         self.adjecency_graph[currentNode.id].append(
             (operations[-1], newNode.id))
+        print(self.adjecency_graph)
 
     # returns the new node or the equivalent old one
 
@@ -67,9 +68,10 @@ class Graph:
     def getCleanGraph(self):
         result = [{"id": 0, "nodes": [0]}]
         self.getCleanGraphRecorsive(1, [0], [0], result)
+        print("the results")
+        print(result)
         return result
-            
-    
+
     def getCleanGraphRecorsive(self, level, alradyScoutedNodes, nodesFromPreviousLayer, result):
         nodes = []
         nodesForNextLayer = []
@@ -81,5 +83,5 @@ class Graph:
                     nodesForNextLayer.append(node)
         if len(nodes) > 0:
             result.append({"id": level, "nodes": nodes})
-            self.getCleanGraphRecorsive(level + 1, alradyScoutedNodes, nodesForNextLayer, result)
-        
+            self.getCleanGraphRecorsive(
+                level + 1, alradyScoutedNodes, nodesForNextLayer, result)
