@@ -62,7 +62,8 @@ class Graph:
         for node_id, next_nodes in enumerate(self.adjecency_graph):
             for (operation, next_node_id) in next_nodes:
                 result.append({"parentNode": node_id,
-                              "childrenNode": next_node_id, "operation": operation})
+                              "childrenNode": next_node_id, "operation": operation.getName()})
+        print("RESULTS:", result)
         return result
 
     def getCleanGraph(self):

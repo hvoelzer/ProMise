@@ -1,6 +1,6 @@
 from event_log import EventLog
 from logs_graph import Graph
-from filter_class import FilterOut
+from filter_class import FilterOut, Filter
 
 
 class Control():
@@ -9,6 +9,7 @@ class Control():
         self.currentEventLog = EventLog()  # Maybe this is not needed
         self.graph = None
         #self.filters = self.initFilters()
+        self.filtersdict = {"filterOut": FilterOut}
 
     def loadRawfile(self, json):
         self.currentEventLog.populateTracesFromCSV(
@@ -16,14 +17,8 @@ class Control():
         self.graph = Graph(self.currentEventLog)
         print(self.currentEventLog)
 
-    def initFilters(self):
-        return [FilterOut()]
-
     def filterFromJson(self, json):  # TODO: this method could probably be written more agile
-        if json["filterName"] == "filterOut":
-            # TODO: should be json["parameters"] instead
-            return FilterOut(json["activityName"])
-        return FilterOut(json["activityName"])  # TODO option for other filters
+        return self.filtersdict[json["filterName"]].generateFilter(json["activityName"])
 
     # maybe the filter is going to be json format, the idea of the code should still hold
     def applyFilter(self, json):

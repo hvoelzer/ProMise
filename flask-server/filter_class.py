@@ -11,13 +11,17 @@ class Filter:
         pass
 
     def getName(self) -> str:
-        return self.name + str(self.parameters)
+        return self.name + self.parameters[0]
 
     def __hash__(self):
         return hash((self.name, self.parameters))
 
     def __eq__(self, filter) -> bool:
         return (self.name == filter.name & self.parameters == filter.parameters)
+
+    @staticmethod
+    def generateFilter(*parameters):
+        pass
 
 
 class FilterOut(Filter):
@@ -36,3 +40,7 @@ class FilterOut(Filter):
                     indicesToRemove.append(count)
             trace.removeEvents(indicesToRemove)
         return eventLog
+
+    @staticmethod
+    def generateFilter(*parameters):
+        return FilterOut(*parameters)
