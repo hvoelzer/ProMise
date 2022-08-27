@@ -1,6 +1,7 @@
 <template>
     <div>
-        <h1> I am the Filter View</h1>
+        <h1>Filter View</h1>
+        <h3>Working on EventLog {{filter.id}}</h3>
         <button @click = "submitFilter('filterOut')"> filter out </button>
         <input
           type="text"
@@ -12,6 +13,7 @@
 
 <script>export default {
   name: 'App',
+  props: ['selected'],
   components: {
 
   },
@@ -21,7 +23,7 @@
             filterName: "",
             activityName: "",
             previousOperations: [], 
-            id: 0
+            id: this.selected
             }
     }
   },
@@ -34,13 +36,15 @@
         .then(() => {
           this.filter.activityName = "";
           this.filter.filterName = "";
-          console.log("SUCCESS");
-          this.$emit('newFilter')
+          console.log("SUCCESS"); 
         })
       }
       catch (e) {
         console.log(e);
       }
+    },
+    getEventLog(){
+        
     }
   },
 }

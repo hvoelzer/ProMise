@@ -91,9 +91,9 @@ export default {
         }.bind(this)
     } );
 },
-    handleFileUpload( event ){
-    this.form.file = event.target.files[0];
-    this.parseFile();
+handleFileUpload( event ){
+  this.form.file = event.target.files[0];
+  this.parseFile();
 },
     submitForm(){
       try {
