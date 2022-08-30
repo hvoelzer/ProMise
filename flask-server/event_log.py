@@ -17,8 +17,18 @@ class Event:
     def copy(self):
         return Event(self.time, self.activity, self.resources)
 
-    def getForDisplay(self):
-        return {'activity': self.activity, 'time': self.time}
+    def getForDisplay(self, headers):
+        event = []
+        for h in headers:
+            if h == "trace":
+                pass
+            elif h == "activity":
+                event.append(self.activity)
+            elif h == "time":
+                event.append(self.time)
+            else:
+                event.append(self.resources[h])
+        return event
 
 
 class Trace:
@@ -70,11 +80,12 @@ class Trace:
             copyTrace.events.append(event.copy())
         return copyTrace
 
-    def getAsList(self):
-        result = []
-        for n, event in enumerate(self.events):
-            result.append({str(n): event.getForDisplay()})
-        return result
+    def getAsList(self, traces, id, headers):
+        for event in self.events:
+            e = event.getForDisplay(headers)
+            e.insert(0, id)
+            print(e)
+            traces.append(e)
 
 class EventLog:
 
@@ -129,7 +140,12 @@ class EventLog:
     def getAsList(self):
         headers = ["trace", "activity", "time"]
         traces = []
+        tracesNames = []
         for trace in self.traces:
-            traces.append({trace.id: trace.getAsList()})
-        result = {"traces": traces, "headers": headers}
+            trace.getAsList(traces, trace.id, headers)
+            tracesNames.append(trace.id)
+        result = {"traces": traces, "headers": headers, "tracesNames":tracesNames}
+        
         return result
+
+        

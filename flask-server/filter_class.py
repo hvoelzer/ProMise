@@ -17,7 +17,7 @@ class Filter:
         return hash((self.name, self.parameters))
 
     def __eq__(self, filter) -> bool:
-        return (self.name == filter.name & self.parameters == filter.parameters)
+        return self.name == filter.name and self.parameters == filter.parameters
 
     @staticmethod
     def generateFilter(*parameters):
