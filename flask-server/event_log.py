@@ -84,7 +84,6 @@ class Trace:
         for event in self.events:
             e = event.getForDisplay(headers)
             e.insert(0, id)
-            print(e)
             traces.append(e)
 
 class EventLog:
@@ -106,7 +105,6 @@ class EventLog:
         return final_t
 
     def populateTracesFromCSV(self, csvFile, timestring, timeColumn, activityColumn, traceColumn):
-        print(len(csvFile))
         for event in csvFile:
             if event[list(event.keys())[traceColumn]] != "":  # filter out empty lines
                 traceIsPresent, trace = self.traceAlreadyPresent(

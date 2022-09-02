@@ -1,8 +1,22 @@
 <template>
     <div>
-        <h1>Graph View</h1>
-        <svg width="100%" height="100" id="mainSvg">
+      <div class="panel">
+            <ol>
+                <li>
+                    <button>CG</button>
+                </li>
+                <li>
+                    <button>HG</button>
+                </li>
+            </ol>
+        </div>
+        <div class="page">
+        
+        <svg width="100%" height="100" id="clean-graph" v-if="cleanGraph">
         </svg>
+        <svg width="100%" height="100" id="history-view" v-else>
+        </svg>
+      </div>
     </div>
 </template>
 
@@ -20,7 +34,8 @@ export default {
         selectedNode: this.selected,
         delay: 500,
         clicks: 0,
-        timer: null
+        timer: null,
+        cleanGraph: true
     }
   },
   methods: {
@@ -50,15 +65,15 @@ export default {
     },
     drawEdge(node1, operation, node2){
       if (node1 != node2){   // TODO at some point address selfloops
-        var mainSvg = document.getElementById('mainSvg');
+        var graph = document.getElementById('clean-graph');
         var edge;
         var label;
         var arrowpoint;
         var parentNode = document.getElementById(node1);
         var childNode = document.getElementById(node2);
-        var xParent = parseFloat(parentNode.getAttribute("cx").replace("%", '')) / 100 * this.getWidth();
+        var xParent = parseFloat(parentNode.getAttribute("cx").replace("%", '')) / 100 * this.getWidth() * 0.8;
         var yParent = parentNode.getAttribute("cy");
-        var xChild = parseFloat(childNode.getAttribute("cx").replace("%", '')) / 100 * this.getWidth();
+        var xChild = parseFloat(childNode.getAttribute("cx").replace("%", '')) / 100 * this.getWidth() * 0.8;
         var yChild = childNode.getAttribute("cy");
         var hypotenuse = Math.sqrt(
               Math.pow(parseFloat(xChild - xParent) , 2) +
@@ -69,9 +84,9 @@ export default {
         var xFixChild = 50 / hypotenuse  * parseFloat(xParent - xChild);
         var yFixChild = 50 / hypotenuse  * parseFloat(yParent - yChild);
 
-        xParent = parseFloat(xParent) + parseFloat(xFixParent) - 7;
+        xParent = parseFloat(xParent) + parseFloat(xFixParent) + 2;
         yParent = parseFloat(yParent) + parseFloat(yFixParent);
-        xChild = parseFloat(xChild) + parseFloat(xFixChild) - 7;
+        xChild = parseFloat(xChild) + parseFloat(xFixChild) + 2;
         yChild = parseFloat(yChild) + parseFloat(yFixChild);
 
 
@@ -88,8 +103,8 @@ export default {
         label.setAttribute("text-anchor", "middle");
         label.textContent = operation;
 
-        mainSvg.appendChild(edge);
-        mainSvg.appendChild(label);
+        graph.appendChild(edge);
+        graph.appendChild(label);
 
         this.svgElementsToRemove.push(edge)
         this.svgElementsToRemove.push(label)
@@ -146,7 +161,7 @@ export default {
         arrowpoint.setAttribute("fill", "red");
         arrowpoint.setAttribute("stroke-width", "3");
 
-        mainSvg.appendChild(arrowpoint);
+        graph.appendChild(arrowpoint);
         this.svgElementsToRemove.push(arrowpoint)
       }  
     },
@@ -186,7 +201,7 @@ export default {
       console.log(id)
     },
     drawNode(x, y, id){
-      var mainSvg = document.getElementById('mainSvg');
+      var graph = document.getElementById('clean-graph');
       var circle;
       var label
 
@@ -205,8 +220,8 @@ export default {
       label.setAttribute("text-anchor", "middle");
       label.textContent = id
 
-      mainSvg.appendChild(circle);
-      mainSvg.appendChild(label);
+      graph.appendChild(circle);
+      graph.appendChild(label);
 
     },
     drawGraph(){
@@ -220,7 +235,7 @@ export default {
           }
       }
       var nLevels = this.edges.levels.length
-      document.getElementById('mainSvg').setAttribute("height", layerHeight + ((layerHeight + betweenLayersHeight) * nLevels)); 
+      document.getElementById('clean-graph').setAttribute("height", layerHeight + ((layerHeight + betweenLayersHeight) * nLevels)); 
 
       // draw Edges
       this.drawEdges()
@@ -233,7 +248,7 @@ export default {
     },
     removeOldEdges(){
       for(var element in this.svgElementsToRemove){
-        document.getElementById('mainSvg').removeChild(this.svgElementsToRemove[element]);
+        document.getElementById('clean-graph').removeChild(this.svgElementsToRemove[element]);
       }
       this.svgElementsToRemove = [];
     }
@@ -245,3 +260,18 @@ export default {
 
 }
 </script>
+
+<style>
+.panel {
+  width: 10%;
+  border: 1px solid red;
+  display: flex;
+
+}
+.page {
+    width: 90%;
+  display: flex;
+  border: 1px solid red;
+
+}
+</style>

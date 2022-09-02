@@ -26,3 +26,6 @@ class Trie(object):
                 return False
             current = current[l]
         return True
+
+    def __repr__(self) -> str:
+        return str(self.child)

@@ -1,5 +1,5 @@
 <template>
-  <div >
+  <div class="centerInput">
       <h1>IMPORT RAW EVENTLOG </h1>
       <form v-on:submit.prevent="submitForm">
       <table>
@@ -114,14 +114,21 @@ handleFileUpload( event ){
 </script>
 
 <style>
-#app {
+.centerInput{
+  margin: 0px;
+  width: initial; 
   font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: left;
-  color: #2c3e50;
-  margin-top: 40px;
-}
+  padding: 8px;
+
+  max-height: calc(100% - 0px); 
+  
+  color:rgb(10, 48, 0); 
+
+  display: flex;
+  flex-direction:column; 
+  align-items: center;
+
+  }
 </style>
 
 <!-- Comment 
