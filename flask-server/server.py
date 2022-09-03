@@ -25,9 +25,16 @@ def import_raw_data():
 
     return "Done", 201
 
+
 @app.route("/get_graph", methods=['GET'])
 def get_graph():
     return control.getEdgesAsJson()
+
+
+@app.route("/get_history_graph", methods=['GET'])
+def get_history_graph():
+    return control.getEdgesAsJsonHistory()
+
 
 @app.route("/filter", methods=['POST'])
 def filter():
@@ -38,9 +45,11 @@ def filter():
 
     return "Done", 201
 
+
 @app.route("/get_event_log", methods=['GET'])
 def get_event_log():
     return control.getEventLog()
+
 
 @app.route("/change_selected_node", methods=['POST'])
 def change_selected_node():

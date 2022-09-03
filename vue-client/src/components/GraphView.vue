@@ -3,10 +3,10 @@
       <div class="panel">
             <ol>
                 <li>
-                    <button>CG</button>
+                    <button @click="showCleanGraph">CG</button>
                 </li>
                 <li>
-                    <button>HG</button>
+                    <button @click="showHistoryGraph">HG</button>
                 </li>
             </ol>
         </div>
@@ -29,19 +29,31 @@ export default {
 
   data(){
     return{
+
         edges: {},
         svgElementsToRemove: [],
         selectedNode: this.selected,
         delay: 500,
         clicks: 0,
         timer: null,
-        cleanGraph: true
+        cleanGraph: true,
+        
     }
   },
   methods: {
+    showCleanGraph(){
+      this.cleanGraph = true
+      this.getGraph()
+    },
+    showHistoryGraph(){
+      this.cleanGraph = false
+      this.getGraph()
+    },
     getGraph(){
       try {
-        this.axios.get(this.$backend.getGraph())
+        this.fetch_from = this.cleanGraph? this.$backend.getGraph() : this.$backend.getHistoryGraph()
+        this.svg_id = this.cleanGraph? 'clean-graph' : 'history-view'
+        this.axios.get(this.fetch_from)
         .then((json) => {
         
           this.edges = json.data;
@@ -65,7 +77,7 @@ export default {
     },
     drawEdge(node1, operation, node2){
       if (node1 != node2){   // TODO at some point address selfloops
-        var graph = document.getElementById('clean-graph');
+        var graph = document.getElementById(this.svg_id);
         var edge;
         var label;
         var arrowpoint;
@@ -201,7 +213,7 @@ export default {
       console.log(id)
     },
     drawNode(x, y, id){
-      var graph = document.getElementById('clean-graph');
+      var graph = document.getElementById(this.svg_id);
       var circle;
       var label
 
@@ -235,7 +247,7 @@ export default {
           }
       }
       var nLevels = this.edges.levels.length
-      document.getElementById('clean-graph').setAttribute("height", layerHeight + ((layerHeight + betweenLayersHeight) * nLevels)); 
+      document.getElementById(this.svg_id).setAttribute("height", layerHeight + ((layerHeight + betweenLayersHeight) * nLevels)); 
 
       // draw Edges
       this.drawEdges()
@@ -248,7 +260,7 @@ export default {
     },
     removeOldEdges(){
       for(var element in this.svgElementsToRemove){
-        document.getElementById('clean-graph').removeChild(this.svgElementsToRemove[element]);
+        document.getElementById(this.svg_id).removeChild(this.svgElementsToRemove[element]);
       }
       this.svgElementsToRemove = [];
     }

@@ -11,6 +11,9 @@ export default class Backend{
     getGraph(){
         return this.url + "/get_graph"
     }
+    getHistoryGraph(){
+        return this.url + "/get_history_graph"
+    }
 
     filter(){
         return this.url + "/filter"

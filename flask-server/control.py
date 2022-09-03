@@ -42,14 +42,26 @@ class Control():
         )
 
     def getEdgesAsJson(self):
-        nod, ed = self.graph.getCleanGraphTrie()
-        print(str({"levels": nod,
-              "edges": ed}).replace("\'", "\""))
-        print(self.graph.map_trie_graph)
+        print(str({"levels": self.graph.getCleanGraph(),
+              "edges": self.graph.getEdges()}).replace("\'", "\""))
         return str({"levels": self.graph.getCleanGraph(), "edges": self.graph.getEdges()}).replace("\'", "\"")
 
+    def getEdgesAsJsonHistory(self):
+        nod, ed, hist = self.graph.getCleanGraphTrie()
+        levels = []
+        for key in nod.keys():
+            levels.append({"id": int(key), "nodes": nod[key]})
+        print(str({"levels": levels,
+              "edges": ed}).replace("\'", "\""))
+        print(self.graph.map_trie_graph)
+        print("historys:", hist)
+        return str({"levels": levels, "edges": ed}).replace("\'", "\"")
+
     def getEventLog(self):
-        return str({"logId": self.graph.lastNode, "eventLog": self.graph.getEventLogFromId(self.graph.lastNode)}).replace("\'", "\"")
+        log = self.graph.cleanNodeFromTrieNode(self.graph.lastNode)
+        nod, ed, history = self.graph.getCleanGraphTrie()
+
+        return str({"logId": self.graph.lastNode, "eventLog": self.graph.getEventLogFromId(log), "history": history[self.graph.lastNode]}).replace("\'", "\"")
 
     def changeLastNode(self, json):
         print(json)

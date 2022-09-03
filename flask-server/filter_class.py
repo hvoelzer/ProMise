@@ -13,6 +13,9 @@ class Filter:
     def getName(self) -> str:
         return self.name + self.parameters[0]
 
+    def getDict(self):
+        return {"filterName": self.name, "activityName": self.parameters[0]}
+
     def __hash__(self):
         return hash((self.name, self.parameters))
 

@@ -1,3 +1,4 @@
+from platform import node
 from trie import Trie
 # An eventLog has to be a set of all traces
 import math
@@ -31,6 +32,7 @@ class Graph:
         self.trie = Trie()
         self.adjecency_graph = [[]]
         self.lastNode = 0
+
         self.nr_trie_nodes = 1
         self.map_trie_graph = {0: [0]}
 
@@ -46,11 +48,11 @@ class Graph:
         self.trie.insert(operations, self.nr_trie_nodes)
 
         self.map_trie_graph[newNode.id].append(self.nr_trie_nodes)
-        self.nr_trie_nodes += 1
 
         self.adjecency_graph[currentNode.id].append(
             (operations[-1], newNode.id))
-        self.lastNode = newNode.id
+        self.lastNode = self.nr_trie_nodes
+        self.nr_trie_nodes += 1
 
     def getEventLogFromId(self, id):
         print(self.trie)
@@ -72,7 +74,8 @@ class Graph:
         return newNode
 
     def getNodefromId(self, id):
-        return self.nodes[id]
+
+        return self.nodes[self.cleanNodeFromTrieNode(id)]
 
     def getEdges(self):
         result = []
@@ -104,10 +107,12 @@ class Graph:
     def getCleanGraphTrie(self):
         nodes = {"0": [0]}
         edges = []
-        self.getCleanGraphRecursiveTrie(0, edges, nodes, self.trie.child)
-        return nodes, edges
+        node_history = {0: []}
+        self.getCleanGraphRecursiveTrie(
+            0, edges, nodes, node_history, self.trie.child)
+        return nodes, edges, node_history
 
-    def getCleanGraphRecursiveTrie(self, level, edges, nodes, current):
+    def getCleanGraphRecursiveTrie(self, level, edges, nodes, node_history, current):
         next = []
         for key in current.keys():
             if type(key) != str:
@@ -116,8 +121,20 @@ class Graph:
                 if level+1 not in nodes:
                     nodes[level+1] = []
                 nodes[level+1].append(current[key]["#"])
+                history = node_history[current["#"]].copy()
+                history.append(key.getDict())
+                print("HISTORY AFTER COPY", history)
+                node_history[current[key]["#"]] = history
                 edges.append(
                     {"parentNode": current["#"], "childrenNode": current[key]["#"], "operation": key.getName()})
 
         for n in next:
-            self.getCleanGraphRecursiveTrie(level+1, edges, nodes, n)
+            self.getCleanGraphRecursiveTrie(
+                level+1, edges, nodes, node_history, n)
+
+    def cleanNodeFromTrieNode(self, trieNodeId):
+
+        for key in self.map_trie_graph.keys():
+
+            if trieNodeId in self.map_trie_graph[key]:
+                return key

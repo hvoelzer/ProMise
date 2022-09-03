@@ -45,7 +45,9 @@ export default {
         filterName: "",
         activityName: "",
         previousOperations: [],
-        id: this.selected
+        id: this.selected,
+        
+       
       },
       eventLog: {},
       array: [],
@@ -79,6 +81,7 @@ export default {
             this.$emit('changeSelected', json.data.logId)
             this.filter.id = json.data.logId
             this.isEventLogReady = true;
+            this.filter.previousOperations = json.data.history
             console.log("GET EVENTLOG SUCCESS");
           })
       }
