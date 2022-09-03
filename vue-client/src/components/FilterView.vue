@@ -1,12 +1,12 @@
 <template>
   <div>
-    <div class="panel">
-      <h3>Working on EventLog {{ filter.id }}</h3>
+    <div class="filterpanel">
+      <h3>Working on: <br> EventLog {{ filter.id }}</h3>
       <button @click="submitFilter('filterOut')"> filter out </button>
       <input type="text" v-model="filter.activityName" placeholder="Activity" />
     </div>
     <div v-if="isEventLogReady" class="page">
-      <table style="width: 100%;">
+      <table class="styled-table">
         <thead>
           <tr>
             <th v-for="(header, key) in eventLog.headers" v-bind:key="'header-' + key">
@@ -98,17 +98,20 @@ export default {
 </script>
 
 <style>
-.panel {
+.filterpanel {
   width: 10%;
-  border: 1px solid red;
   flex-direction: column;
   display: flex;
+  background-color: aquamarine;
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  padding: 8px;
+  
+  color:rgb(10, 48, 0); 
 
 }
 .page {
     width: 90%;
   display: flex;
-  border: 1px solid red;
 
 }
 .profile-main-loader .loader {
@@ -144,6 +147,37 @@ export default {
   -webkit-animation: dash 1.5s ease-in-out infinite, color 6s ease-in-out infinite;
   animation: dash 1.5s ease-in-out infinite, color 6s ease-in-out infinite;
   stroke-linecap: round;
+}
+
+.styled-table {
+    border-collapse: collapse;
+    font-size: 0.9em;
+    font-family: sans-serif;
+    min-width: 400px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+.styled-table thead tr {
+    background-color: #009879;
+    color: #ffffff;
+    text-align: left;
+}
+
+.styled-table th,
+.styled-table td {
+    padding: 12px 15px;
+}
+
+.styled-table tbody tr {
+    border-bottom: 1px solid #dddddd;
+}
+
+.styled-table tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+}
+
+.styled-table tbody tr:last-of-type {
+    border-bottom: 2px solid #009879;
 }
 
 @-webkit-keyframes rotate {
