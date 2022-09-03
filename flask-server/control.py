@@ -42,6 +42,10 @@ class Control():
         )
 
     def getEdgesAsJson(self):
+        nod, ed = self.graph.getCleanGraphTrie()
+        print(str({"levels": nod,
+              "edges": ed}).replace("\'", "\""))
+        print(self.graph.map_trie_graph)
         return str({"levels": self.graph.getCleanGraph(), "edges": self.graph.getEdges()}).replace("\'", "\"")
 
     def getEventLog(self):

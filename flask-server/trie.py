@@ -1,15 +1,16 @@
 
 class Trie(object):
     def __init__(self):
-        self.child = {}
+        self.child = {"#": 0}
 
-    def insert(self, operations):
+    def insert(self, operations, new_id):
+        print("Operations", operations)
         current = self.child
         for operation in operations:
             if operation not in current:
-                current[operation] = {}
+                current[operation] = {"#": new_id}
+                break
             current = current[operation]
-        current['#'] = 1
 
     def search(self, operations):
         current = self.child

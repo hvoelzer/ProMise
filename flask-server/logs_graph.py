@@ -1,5 +1,6 @@
 from trie import Trie
 # An eventLog has to be a set of all traces
+import math
 
 
 class Node:  # alias Log
@@ -30,17 +31,23 @@ class Graph:
         self.trie = Trie()
         self.adjecency_graph = [[]]
         self.lastNode = 0
+        self.nr_trie_nodes = 1
+        self.map_trie_graph = {0: [0]}
 
     # Whenever a diff (filter) is created we need to generate a new node
     # [operation] or list of diff/filter that have been applied in the path
     def addOperation(self, currentNode, newEventLog, operations):
-        self.trie.insert(operations)
 
         # NOTE is going to be a problem if we delete nodes
         newNodeNotChecked = Node(newEventLog, len(self.nodes))
 
         # check if node already exists
         newNode = self.checkForMatch(newNodeNotChecked)
+        self.trie.insert(operations, self.nr_trie_nodes)
+
+        self.map_trie_graph[newNode.id].append(self.nr_trie_nodes)
+        self.nr_trie_nodes += 1
+
         self.adjecency_graph[currentNode.id].append(
             (operations[-1], newNode.id))
         self.lastNode = newNode.id
@@ -56,10 +63,12 @@ class Graph:
         for node in self.nodes:
             if node.hash == newNode.hash:
                 if True:  # TODO here we need a further check, maybe done line by line in each trace between the two eventlogs
+
                     return node
         # if node does not match with any other node, add an entry to node list and adjacency graph
         self.nodes.append(newNode)
         self.adjecency_graph.append([])
+        self.map_trie_graph[newNode.id] = []
         return newNode
 
     def getNodefromId(self, id):
@@ -91,3 +100,24 @@ class Graph:
             result.append({"id": level, "nodes": nodes})
             self.getCleanGraphRecorsive(
                 level + 1, alradyScoutedNodes, nodesForNextLayer, result)
+
+    def getCleanGraphTrie(self):
+        nodes = {"0": [0]}
+        edges = []
+        self.getCleanGraphRecursiveTrie(0, edges, nodes, self.trie.child)
+        return nodes, edges
+
+    def getCleanGraphRecursiveTrie(self, level, edges, nodes, current):
+        next = []
+        for key in current.keys():
+            if type(key) != str:
+                print(current[key])
+                next.append(current[key])
+                if level+1 not in nodes:
+                    nodes[level+1] = []
+                nodes[level+1].append(current[key]["#"])
+                edges.append(
+                    {"parentNode": current["#"], "childrenNode": current[key]["#"], "operation": key.getName()})
+
+        for n in next:
+            self.getCleanGraphRecursiveTrie(level+1, edges, nodes, n)
