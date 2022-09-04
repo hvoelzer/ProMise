@@ -18,7 +18,7 @@ class Trie(object):
             if operation not in current:
                 return False
             current = current[operation]
-        return '#' in current
+        return current["#"]
 
     def startsWith(self, prefix):
         current = self.child

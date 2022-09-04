@@ -39,20 +39,24 @@ class Graph:
     # Whenever a diff (filter) is created we need to generate a new node
     # [operation] or list of diff/filter that have been applied in the path
     def addOperation(self, currentNode, newEventLog, operations):
+        id = self.trie.search(operations)
+        if not id:
+            # NOTE is going to be a problem if we delete nodes
+            newNodeNotChecked = Node(newEventLog, len(self.nodes))
 
-        # NOTE is going to be a problem if we delete nodes
-        newNodeNotChecked = Node(newEventLog, len(self.nodes))
+            # check if node already exists
+            newNode = self.checkForMatch(newNodeNotChecked)
+            self.trie.insert(operations, self.nr_trie_nodes)
 
-        # check if node already exists
-        newNode = self.checkForMatch(newNodeNotChecked)
-        self.trie.insert(operations, self.nr_trie_nodes)
+            self.map_trie_graph[newNode.id].append(self.nr_trie_nodes)
 
-        self.map_trie_graph[newNode.id].append(self.nr_trie_nodes)
-
-        self.adjecency_graph[currentNode.id].append(
-            (operations[-1], newNode.id))
-        self.lastNode = self.nr_trie_nodes
-        self.nr_trie_nodes += 1
+            self.adjecency_graph[currentNode.id].append(
+                (operations[-1], newNode.id))
+            self.lastNode = self.nr_trie_nodes
+            self.nr_trie_nodes += 1
+        else:
+            print("IDi", id)
+            self.lastNode = id
 
     def getEventLogFromId(self, id):
         print(self.trie)

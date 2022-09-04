@@ -98,9 +98,9 @@ export default {
         var xFixChild = 50 / hypotenuse * parseFloat(xParent - xChild);
         var yFixChild = 50 / hypotenuse * parseFloat(yParent - yChild);
 
-        xParent = parseFloat(xParent) + parseFloat(xFixParent) + 2;
+        xParent = parseFloat(xParent) + parseFloat(xFixParent) + 7;
         yParent = parseFloat(yParent) + parseFloat(yFixParent);
-        xChild = parseFloat(xChild) + parseFloat(xFixChild) + 2;
+        xChild = parseFloat(xChild) + parseFloat(xFixChild) + 7;
         yChild = parseFloat(yChild) + parseFloat(yFixChild);
 
 
@@ -139,7 +139,7 @@ export default {
         var point2xI = distance
         var point2yI = 0
         var point3xI = 0
-        var point3yI = distance
+        var point3yI = -distance
 
         var point2x
         var point2y
@@ -148,18 +148,19 @@ export default {
 
         if (parseFloat(xParent - xChild) >= 0) {
 
-          point2x = parseFloat(point2xI) * parseFloat(sinAngle) + parseFloat(point2yI) * parseFloat(cosAngle)
-          point2y = parseFloat(point2xI) * parseFloat(cosAngle) - parseFloat(point2yI) * parseFloat(sinAngle)
+          point2x = parseFloat(point2xI) * parseFloat(sinAngle) - parseFloat(point2yI) * parseFloat(cosAngle)
+          point2y = parseFloat(point2xI) * parseFloat(cosAngle) + parseFloat(point2yI) * parseFloat(sinAngle)
 
-          point3x = parseFloat(point3xI) * parseFloat(sinAngle) + parseFloat(point3yI) * parseFloat(cosAngle)
-          point3y = parseFloat(point3xI) * parseFloat(cosAngle) - parseFloat(point3yI) * parseFloat(sinAngle)
+          point3x = parseFloat(point3xI) * parseFloat(sinAngle) - parseFloat(point3yI) * parseFloat(cosAngle)
+          point3y = parseFloat(point3xI) * parseFloat(cosAngle) + parseFloat(point3yI) * parseFloat(sinAngle)
         }
         else {
-          point2y = parseFloat(point2xI) * parseFloat(sinAngle) + parseFloat(point2yI) * parseFloat(cosAngle)
-          point2x = parseFloat(point2xI) * parseFloat(cosAngle) - parseFloat(point2yI) * parseFloat(sinAngle)
+          
+          point2x = parseFloat(point2xI) * parseFloat(cosAngle) + parseFloat(point2yI) * parseFloat(sinAngle)
+          point2y = parseFloat(point2xI) * parseFloat(sinAngle) - parseFloat(point2yI) * parseFloat(cosAngle)
 
-          point3y = parseFloat(point3xI) * parseFloat(sinAngle) + parseFloat(point3yI) * parseFloat(cosAngle)
-          point3x = parseFloat(point3xI) * parseFloat(cosAngle) - parseFloat(point3yI) * parseFloat(sinAngle)
+          point3x = parseFloat(point3xI) * parseFloat(cosAngle) + parseFloat(point3yI) * parseFloat(sinAngle)
+          point3y = parseFloat(point3xI) * parseFloat(sinAngle) - parseFloat(point3yI) * parseFloat(cosAngle)
         }
 
         point2x = parseFloat(xChild) + parseFloat(point2x)
