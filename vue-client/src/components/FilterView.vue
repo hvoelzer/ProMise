@@ -76,7 +76,6 @@ export default {
       try {
         this.axios.get(this.$backend.getEventLog())
           .then((json) => {
-            console.log(json.data)
             this.eventLog = json.data.eventLog;
             this.$emit('changeSelected', json.data.logId)
             this.filter.id = json.data.logId
