@@ -35,6 +35,8 @@ export default {
       clicks: 0,
       timer: null,
       cleanGraph: true,
+      colorList: ["red","yellow","green","orange"],
+      
 
     }
   },
@@ -52,6 +54,7 @@ export default {
       this.getGraph()
     },
     getGraph() {
+
       try {
         this.fetch_from = this.cleanGraph ? this.$backend.getGraph() : this.$backend.getHistoryGraph()
         this.svg_id = this.cleanGraph ? 'clean-graph' : 'history-view'
@@ -59,8 +62,8 @@ export default {
           .then((json) => {
 
             this.edges = json.data;
+            console.log(this.edges)
             this.drawGraph()
-
             console.log("GET GRAPH SUCCEEDED");
           })
       }
@@ -235,7 +238,7 @@ export default {
       circle.setAttribute("cx", x + "%");
       circle.setAttribute("cy", y + "");
       circle.setAttribute("r", 50);
-      circle.setAttribute("fill", (this.selectedNode == id) ? 'aqua' : 'blue');
+      circle.setAttribute("fill", (this.selectedNode == id) ? 'aqua' : (this.cleanGraph)? this.colorList[id] : this.colorList[this.edges.map[id]]);
       circle.setAttribute("stroke", "black");
       circle.setAttribute("id", id);
       if (!this.cleanGraph){
@@ -297,8 +300,8 @@ export default {
 
 <style>
 .newpanel {
-  width: 10%;
-  background-color: aquamarine;
+  min-width: 80px;
+  background-color: rgb(103, 146, 93);
   display: flex;
   flex-direction: column;
 
@@ -311,25 +314,27 @@ export default {
 }
 
 .graphsButtons {
+    margin-right: 20px;
+    margin-top: 13px;
     align-self: center center;
     margin-left: 20px;
-    width: 90px;
-    height: 90px;
+    width: 50px;
+    height: 50px;
     cursor: pointer;
     text-align: center;
-    font-family: Open Sans;
-    font-size: 18px;
+    font-family: Avenir, Helvetica, Arial, sans-serif;
+    font-size: 11px;
     font-weight: 300;
-    color: rgb(226, 226, 226);
+    color: rgb(0, 0, 0);
     border-radius: 5px;
     border-color: rgb(226, 226, 226);
     background-size: 88px;
-
+    border-style: solid;
 }
 
 .graphsButtons:hover {
-    font-size: 20px;
+    font-size: 13px;
     font-weight: 400;
-    color: rgb(255, 255, 255);
+    
 }
 </style>

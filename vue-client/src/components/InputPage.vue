@@ -7,15 +7,7 @@
         <td><label> CSV File </label></td>
         <td><input type="file" accept=".csv" @change="handleFileUpload( $event )"/></td>
         </tr>
-        <tr>
-        <label> Separator </label>
-        <td><input
-           type="text"
-          v-model="form.seperator"
-          placeholder="Separator"
-         
-        /></td>
-        </tr>
+        
         <tr>
         <label> Timestamp formatting String </label>
         <td><input
@@ -69,7 +61,7 @@ export default {
   data(){
     return {
       form: {
-        seperator: "",
+       
         timestampformat : "%Y-%m-%dT%H:%M:%S",
         tracecolumn: 0,
         activitycolumn: 5,
@@ -100,7 +92,7 @@ handleFileUpload( event ){
 
         this.axios.post(this.$backend.getUrlData(),this.form)
         .then(() => {
-          this.form.seperator = "";
+         
           console.log("IMPORT SUCCEEDED");
           router.push("/app/graph");
         })

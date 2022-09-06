@@ -46,6 +46,14 @@ class Control():
               "edges": self.graph.getEdges()}).replace("\'", "\""))
         return str({"levels": self.graph.getCleanGraph(), "edges": self.graph.getEdges()}).replace("\'", "\"")
 
+    def reverseGraphTrieMap(self):
+        reverse = {}
+        for key in self.graph.map_trie_graph.keys():
+            for elemnt in self.graph.map_trie_graph[key]:
+                st_elem = str(elemnt)
+                reverse[st_elem] = key
+        return reverse
+
     def getEdgesAsJsonHistory(self):
         nod, ed, hist = self.graph.getCleanGraphTrie()
         levels = []
@@ -55,7 +63,9 @@ class Control():
               "edges": ed}).replace("\'", "\""))
         print(self.graph.map_trie_graph)
         print("historys:", hist)
-        return str({"levels": levels, "edges": ed}).replace("\'", "\"")
+        map = self.reverseGraphTrieMap()
+        print(map)
+        return str({"levels": levels, "edges": ed, "map": map}).replace("\'", "\"")
 
     def getEventLog(self):
         log = self.graph.cleanNodeFromTrieNode(self.graph.lastNode)

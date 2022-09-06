@@ -2,9 +2,9 @@
     <div class="parent">
         <div class="panel">
             <br>
-            <button @click="goToGraphView" class="graphButton"></button>
+            <button @click="goToGraphView" class="navigationButton graphButton" ></button>
             <br>
-            <button @click="goToFilterView" class="filterButton"></button>
+            <button @click="goToFilterView" class="navigationButton filterButton" ></button>
 
         </div>
         <router-view :selected="this.selected" @changeSelected="newSelected" class="page" />
@@ -44,63 +44,46 @@ export default {
 }
 
 .panel {
-    width: 10%;
-    background-color: blueviolet;
+    min-width: 60px;
+    background-color: grey;
     flex-direction: column;
     display: flex;
-
+    padding: 10px 10px 10px 10px;
 }
 
 .page {
-    width: 90%;
+
     display: flex;
 
 }
-
-.graphButton {
-    align-self: center center;
-    margin-left: 20px;
-    width: 90px;
-    height: 90px;
-    cursor: pointer;
-    text-align: center;
-    font-family: Open Sans;
-    font-size: 18px;
-    font-weight: 300;
-    color: rgb(226, 226, 226);
-    border-color: rgb(226, 226, 226);
-    border-radius: 5px;
-    background-image: url(..\\assets\\presentation.png);
-    background-size: 88px;
-
-}
-
-.graphButton:hover {
-    font-size: 20px;
-    font-weight: 400;
-    color: rgb(255, 255, 255);
-}
 .filterButton {
+    background-size: 48px;
+    background-image: url(../assets/filter.png);
+}
+.graphButton {
+    background-size: 48px;
+    background-image: url(../assets/presentation.png);
+}
+
+.navigationButton:hover {
+    background-size: 58px;
+    
+}
+.navigationButton {
+    background-repeat: no-repeat;
+    border-color: transparent;
+    background-color: transparent;
     align-self: center center;
-    margin-left: 20px;
-    width: 90px;
-    height: 90px;
+    
+    width: 60px;
+    height: 60px;
     cursor: pointer;
-    text-align: center;
-    font-family: Open Sans;
-    font-size: 18px;
-    font-weight: 300;
+
     color: rgb(226, 226, 226);
-    border-radius: 5px;
-    border-color: rgb(226, 226, 226);
-    background-image: url(..\\assets\\filter.png);
-    background-size: 88px;
+    
+
+
 
 }
 
-.filterButton:hover {
-    font-size: 20px;
-    font-weight: 400;
-    color: rgb(255, 255, 255);
-}
 </style>
