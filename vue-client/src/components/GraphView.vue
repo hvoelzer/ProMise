@@ -35,7 +35,7 @@ export default {
       clicks: 0,
       timer: null,
       cleanGraph: true,
-      colorList: ["red","yellow","green","orange"],
+      colorList: ["red","blue","pink","yellow","green","orange","purple"],
       
 
     }
@@ -210,7 +210,7 @@ export default {
     changeLog(id) {
       this.clicks++;
       var oldSelectedNode = document.getElementById(this.selectedNode);
-      oldSelectedNode.setAttribute("fill", "blue")
+      oldSelectedNode.setAttribute("fill", (this.cleanGraph)? this.colorList[oldSelectedNode.id] : this.colorList[this.edges.map[oldSelectedNode.id]])
       this.selectedNode = id
       var newSelectedNode = document.getElementById(this.selectedNode);
       newSelectedNode.setAttribute("fill", "aqua")
