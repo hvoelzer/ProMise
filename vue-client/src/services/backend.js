@@ -27,4 +27,8 @@ export default class Backend{
         return this.url + "/change_selected_node"
     }
 
+    snapshot(){
+        return this.url + "/snapshot"
+    }
+
 }

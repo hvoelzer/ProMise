@@ -61,5 +61,15 @@ def change_selected_node():
     return "Done", 201
 
 
+@app.route("/snapshot", methods=['POST'])
+def create_snapshot():
+    id = request.get_json()
+    control.create_snapshot(id)
+
+    print("done")
+
+    return "Done", 201
+
+
 if __name__ == "__main__":
     app.run(debug=True)

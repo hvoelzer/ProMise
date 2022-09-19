@@ -55,7 +55,7 @@ class Control():
         return reverse
 
     def getEdgesAsJsonHistory(self):
-        nod, ed, hist = self.graph.getCleanGraphTrie()
+        nod, ed, hist = self.graph.getCleanGraphTrie(False)
         levels = []
         for key in nod.keys():
             levels.append({"id": int(key), "nodes": nod[key]})
@@ -69,10 +69,35 @@ class Control():
 
     def getEventLog(self):
         log = self.graph.cleanNodeFromTrieNode(self.graph.lastNode)
-        nod, ed, history = self.graph.getCleanGraphTrie()
+        nod, ed, history = self.graph.getCleanGraphTrie(False)
 
         return str({"logId": self.graph.lastNode, "eventLog": self.graph.getEventLogFromId(log), "history": history[self.graph.lastNode]}).replace("\'", "\"")
 
     def changeLastNode(self, json):
         print(json)
         self.graph.lastNode = json["id"]
+
+    def create_snapshot(self, json):
+        fname = 'snapshot.py'
+        nod, ed, history = self.graph.getCleanGraphTrie(True)
+
+        dependencies = 'event_log.py'
+
+        with open(dependencies, 'r') as d:
+            dep_str = d.read()
+            d.close()
+
+        script = "\n\n\n\n #DEPENDENCIES:  \n\n " + dep_str
+        script = script + \
+            """\npath = \" type in your path here \"\neventlog = EventLog()\neventlog.populateTracesFromCSV(\njson["content"]["data"], \"timestampformat\", \"timestampcolumn\", \"activitycolumn\", \"tracecolumn\")"""
+
+        for filter in history[json["id"]]:
+            cmt = filter.get_comment()
+            fct = filter.get_function()
+            script = script + "\n" + cmt + "\n" + \
+                fct
+        print(script)
+
+        with open(fname, 'w') as f:
+            f.write(script)
+            f.close()

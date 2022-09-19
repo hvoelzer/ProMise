@@ -207,6 +207,13 @@ export default {
       }
 
     },
+    snapshot(id) {
+      console.log(id)
+      this.axios.post(this.$backend.snapshot(), {"id" : id})
+          .then(() => {
+            console.log("Snapshot SUCCEEDED");
+          })
+    },
     changeLog(id) {
       this.clicks++;
       var oldSelectedNode = document.getElementById(this.selectedNode);
@@ -242,6 +249,7 @@ export default {
       circle.setAttribute("stroke", "black");
       circle.setAttribute("id", id);
       if (!this.cleanGraph){
+        circle.addEventListener('contextmenu', (e) => {e.preventDefault();this.snapshot(id);}, false);
         circle.addEventListener("click", this.changeLog.bind(null, id), false);
       }
       label = document.createElementNS("http://www.w3.org/2000/svg", "text");

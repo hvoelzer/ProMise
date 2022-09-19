@@ -22,6 +22,12 @@ class Filter:
     def __eq__(self, filter) -> bool:
         return self.name == filter.name and self.parameters == filter.parameters
 
+    def get_function(self) -> str:
+        pass
+
+    def get_comment(self) -> str:
+        pass
+
     @staticmethod
     def generateFilter(*parameters):
         pass
@@ -43,6 +49,17 @@ class FilterOut(Filter):
                     indicesToRemove.append(count)
             trace.removeEvents(indicesToRemove)
         return eventLog
+
+    def get_function(self):
+        return """for trace in eventlog.traces:
+            indicesToRemove = []
+            for count, event in enumerate(trace.events):
+                if event.activity == \"{}\":
+                    indicesToRemove.append(count)
+            trace.removeEvents(indicesToRemove)""".format(self.parameters[0])
+
+    def get_comment(self):
+        return "#This filters out activity {}.".format(self.parameters[0])
 
     @staticmethod
     def generateFilter(*parameters):

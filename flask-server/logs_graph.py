@@ -108,15 +108,15 @@ class Graph:
             self.getCleanGraphRecorsive(
                 level + 1, alradyScoutedNodes, nodesForNextLayer, result)
 
-    def getCleanGraphTrie(self):
+    def getCleanGraphTrie(self, for_snapshot):
         nodes = {"0": [0]}
         edges = []
         node_history = {0: []}
         self.getCleanGraphRecursiveTrie(
-            0, edges, nodes, node_history, self.trie.child)
+            0, edges, nodes, node_history, self.trie.child, for_snapshot)
         return nodes, edges, node_history
 
-    def getCleanGraphRecursiveTrie(self, level, edges, nodes, node_history, current):
+    def getCleanGraphRecursiveTrie(self, level, edges, nodes, node_history, current, for_snapshot):
         next = []
         for key in current.keys():
             if type(key) != str:
@@ -126,15 +126,18 @@ class Graph:
                     nodes[level+1] = []
                 nodes[level+1].append(current[key]["#"])
                 history = node_history[current["#"]].copy()
-                history.append(key.getDict())
-                print("HISTORY AFTER COPY", history)
+                if (for_snapshot):
+                    history.append(key)
+                else:
+                    history.append(key.getDict())
+
                 node_history[current[key]["#"]] = history
                 edges.append(
                     {"parentNode": current["#"], "childrenNode": current[key]["#"], "operation": key.getName()})
 
         for n in next:
             self.getCleanGraphRecursiveTrie(
-                level+1, edges, nodes, node_history, n)
+                level+1, edges, nodes, node_history, n, for_snapshot)
 
     def cleanNodeFromTrieNode(self, trieNodeId):
 
