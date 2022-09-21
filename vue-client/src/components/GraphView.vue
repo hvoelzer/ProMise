@@ -82,15 +82,17 @@ export default {
       );
     },
     drawEdge(node1, operation, node2) {
+      var graph = document.getElementById(this.svg_id);
+      var edge;
+      var label;
+      var arrowpoint;
+      var xParent;
+      var yParent;
       if (node1 != node2) {   // TODO at some point address selfloops
-        var graph = document.getElementById(this.svg_id);
-        var edge;
-        var label;
-        var arrowpoint;
         var parentNode = document.getElementById(node1);
         var childNode = document.getElementById(node2);
-        var xParent = parseFloat(parentNode.getAttribute("cx").replace("%", '')) / 100 * this.getWidth() * 0.8;
-        var yParent = parentNode.getAttribute("cy");
+        xParent = parseFloat(parentNode.getAttribute("cx").replace("%", '')) / 100 * this.getWidth() * 0.8;
+        yParent = parentNode.getAttribute("cy");
         var xChild = parseFloat(childNode.getAttribute("cx").replace("%", '')) / 100 * this.getWidth() * 0.8;
         var yChild = childNode.getAttribute("cy");
         var hypotenuse = Math.sqrt(
@@ -193,6 +195,46 @@ export default {
           this.svgElementsToRemoveHistory.push(arrowpoint)
 
         }
+      }
+      else{
+        var node = document.getElementById(node1);
+        xParent = parseFloat(node.getAttribute("cx").replace("%", '')) / 100 * this.getWidth() * 0.8;
+        yParent = node.getAttribute("cy");
+        edge = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        var x1 = xParent + 7
+        var x2 = xParent + 100 + 7
+        var x3 = xParent + 50 + 7
+        var y1 = yParent - 50
+        var y2 = yParent - 100
+        var y3 = yParent
+        edge.setAttribute("d", "M " + x1 + " " + y1 + " Q" + x2 + " " + y2 + " " + x3 + " " + y3);
+        edge.setAttribute("fill", "none");
+        edge.setAttribute("stroke", "red");
+        edge.setAttribute("stroke-width", "3");
+        graph.appendChild(edge);
+
+        var xlabel = xParent + 70 + 7
+        var ylabel = yParent - 60
+        label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        label.setAttribute("x", xlabel);
+        label.setAttribute("y", ylabel);
+        label.setAttribute("text-anchor", "middle");
+        label.textContent = operation;
+        graph.appendChild(label);
+
+        if (this.cleanGraph) {
+
+        this.svgElementsToRemoveClean.push(edge)
+        this.svgElementsToRemoveClean.push(label)
+        this.svgElementsToRemoveClean.push(arrowpoint)
+        }
+        else {
+        this.svgElementsToRemoveHistory.push(edge)
+        this.svgElementsToRemoveHistory.push(label)
+        this.svgElementsToRemoveHistory.push(arrowpoint)
+
+        }
+
       }
     },
     postChangeOfLog(id) {
