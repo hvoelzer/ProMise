@@ -101,6 +101,7 @@ class Control():
             script = script + "\n" + cmt + "\n" + \
                 fct
         print(script)
+        script = script + "\neventlog.export(\"final.csv\")"
 
         rawlog = "rawlog ={}".format(self.graph.logdetails["content"]["data"])
         with open(rawlogname, 'w') as r:
