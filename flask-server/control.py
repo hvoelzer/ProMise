@@ -44,9 +44,10 @@ class Control():
         )
 
     def getEdgesAsJson(self):
+        map = self.reverseGraphTrieMap()
         print(str({"levels": self.graph.getCleanGraph(),
               "edges": self.graph.getEdges()}).replace("\'", "\""))
-        return str({"levels": self.graph.getCleanGraph(), "edges": self.graph.getEdges()}).replace("\'", "\"")
+        return str({"levels": self.graph.getCleanGraph(), "edges": self.graph.getEdges(), "map": map}).replace("\'", "\"")
 
     def reverseGraphTrieMap(self):
         reverse = {}

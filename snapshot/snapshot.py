@@ -162,32 +162,11 @@ path = " type in your path here "
 eventlog = EventLog()
 eventlog.populateTracesFromCSV(
 rawlog, "%Y-%m-%dT%H:%M:%S", 3, 5, 0)
-#This filters out activity T11_Bed.
+#This filters out activity a.
 for trace in eventlog.traces:
             indicesToRemove = []
             for count, event in enumerate(trace.events):
-                if event.activity == "T11_Bed":
-                    indicesToRemove.append(count)
-            trace.removeEvents(indicesToRemove)
-#This filters out activity T10_Bed.
-for trace in eventlog.traces:
-            indicesToRemove = []
-            for count, event in enumerate(trace.events):
-                if event.activity == "T10_Bed":
-                    indicesToRemove.append(count)
-            trace.removeEvents(indicesToRemove)
-#This filters out activity Window5_Bathroom.
-for trace in eventlog.traces:
-            indicesToRemove = []
-            for count, event in enumerate(trace.events):
-                if event.activity == "Window5_Bathroom":
-                    indicesToRemove.append(count)
-            trace.removeEvents(indicesToRemove)
-#This filters out activity Window_Bedroom.
-for trace in eventlog.traces:
-            indicesToRemove = []
-            for count, event in enumerate(trace.events):
-                if event.activity == "Window_Bedroom":
+                if event.activity == "a":
                     indicesToRemove.append(count)
             trace.removeEvents(indicesToRemove)
 eventlog.export("final.csv")
