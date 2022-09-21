@@ -15,6 +15,8 @@ class Control():
         self.currentEventLog.populateTracesFromCSV(
             json["content"]["data"], json["timestampformat"], json["timestampcolumn"], json["activitycolumn"], json["tracecolumn"])
         self.graph = Graph(self.currentEventLog)
+
+        self.graph.logdetails = json
         print(self.currentEventLog)
 
     def filterFromJson(self, json):  # TODO: this method could probably be written more agile
@@ -78,7 +80,8 @@ class Control():
         self.graph.lastNode = json["id"]
 
     def create_snapshot(self, json):
-        fname = 'snapshot.py'
+        fname = '../snapshot/snapshot.py'
+        rawlogname = '../snapshot/rawLog.py'
         nod, ed, history = self.graph.getCleanGraphTrie(True)
 
         dependencies = 'event_log.py'
@@ -87,9 +90,10 @@ class Control():
             dep_str = d.read()
             d.close()
 
-        script = "\n\n\n\n #DEPENDENCIES:  \n\n " + dep_str
+        script = "\n\n\n\n #DEPENDENCIES:  \nfrom rawLog import rawlog\n\n " + dep_str
         script = script + \
-            """\npath = \" type in your path here \"\neventlog = EventLog()\neventlog.populateTracesFromCSV(\njson["content"]["data"], \"timestampformat\", \"timestampcolumn\", \"activitycolumn\", \"tracecolumn\")"""
+            """\npath = \" type in your path here \"\neventlog = EventLog()\neventlog.populateTracesFromCSV(\nrawlog, \"{0}\", {1}, {2}, {3})""".format(
+                self.graph.logdetails["timestampformat"], self.graph.logdetails["timestampcolumn"], self.graph.logdetails["activitycolumn"], self.graph.logdetails["tracecolumn"])
 
         for filter in history[json["id"]]:
             cmt = filter.get_comment()
@@ -97,6 +101,11 @@ class Control():
             script = script + "\n" + cmt + "\n" + \
                 fct
         print(script)
+
+        rawlog = "rawlog ={}".format(self.graph.logdetails["content"]["data"])
+        with open(rawlogname, 'w') as r:
+            r.write(rawlog)
+            r.close()
 
         with open(fname, 'w') as f:
             f.write(script)

@@ -1,5 +1,6 @@
 
 import datetime
+import csv
 
 
 class Event:
@@ -86,6 +87,7 @@ class Trace:
             e.insert(0, id)
             traces.append(e)
 
+
 class EventLog:
 
     def __init__(self):
@@ -96,6 +98,14 @@ class EventLog:
             if trace.id == id:
                 return True, trace
         return False, Trace(id)
+
+    def export(self, fname):
+        with open(fname, 'w') as f:
+            writer = csv.writer(f)
+            writer.writerow(['TraceID', 'Activity', 'Time'])
+            for trace in self.traces:
+                for event in trace.events:
+                    writer.writerow([trace.id, event.activity, event.time])
 
     def convert_to_seconds(self, time, time_string, number_chars_timestamp):
         t = datetime.datetime.strptime(
@@ -123,12 +133,6 @@ class EventLog:
             string += "- " + str(trace) + "\n"
         return string
 
-    def __repr__(self):
-        string = "EventLog: \n"
-        for trace in self.traces:
-            string += "- " + str(trace) + "\n"
-        return string
-
     def copy(self):
         copyEventLog = EventLog()
         for trace in self.traces:
@@ -142,8 +146,7 @@ class EventLog:
         for trace in self.traces:
             trace.getAsList(traces, trace.id, headers)
             tracesNames.append(trace.id)
-        result = {"traces": traces, "headers": headers, "tracesNames":tracesNames}
-        
-        return result
+        result = {"traces": traces, "headers": headers,
+                  "tracesNames": tracesNames}
 
-        
+        return result

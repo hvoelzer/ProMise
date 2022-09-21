@@ -1,9 +1,13 @@
 
 
-# DEPENDENCIES:
 
 
+ #DEPENDENCIES:  
+from rawLog import rawlog
+
+ 
 import datetime
+import csv
 
 
 class Event:
@@ -102,6 +106,14 @@ class EventLog:
                 return True, trace
         return False, Trace(id)
 
+    def export(self, fname):
+        with open(fname, 'w') as f:
+            writer = csv.writer(f)
+            writer.writerow(['TraceID', 'Activity', 'Time'])
+            for trace in self.traces:
+                for event in trace.events:
+                    writer.writerow([trace.id, event.activity, event.time])
+
     def convert_to_seconds(self, time, time_string, number_chars_timestamp):
         t = datetime.datetime.strptime(
             time[0:number_chars_timestamp], time_string)
@@ -128,12 +140,6 @@ class EventLog:
             string += "- " + str(trace) + "\n"
         return string
 
-    def __repr__(self):
-        string = "EventLog: \n"
-        for trace in self.traces:
-            string += "- " + str(trace) + "\n"
-        return string
-
     def copy(self):
         copyEventLog = EventLog()
         for trace in self.traces:
@@ -152,22 +158,14 @@ class EventLog:
 
         return result
 
-
 path = " type in your path here "
 eventlog = EventLog()
 eventlog.populateTracesFromCSV(
-    json["content"]["data"], "timestampformat", "timestampcolumn", "activitycolumn", "tracecolumn")
-# This filters out activity a.
+rawlog, "%Y-%m-%dT%H:%M:%S", 3, 5, 0)
+#This filters out activity a.
 for trace in eventlog.traces:
-    indicesToRemove = []
-    for count, event in enumerate(trace.events):
-        if event.activity == "a":
-            indicesToRemove.append(count)
-    trace.removeEvents(indicesToRemove)
-# This filters out activity b.
-for trace in eventlog.traces:
-    indicesToRemove = []
-    for count, event in enumerate(trace.events):
-        if event.activity == "b":
-            indicesToRemove.append(count)
-    trace.removeEvents(indicesToRemove)
+            indicesToRemove = []
+            for count, event in enumerate(trace.events):
+                if event.activity == "a":
+                    indicesToRemove.append(count)
+            trace.removeEvents(indicesToRemove)

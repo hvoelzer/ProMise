@@ -1,6 +1,7 @@
 
 
-from flask import Flask, request
+from flask import Flask, request, send_file
+
 from flask_cors import CORS
 from control import Control
 
@@ -69,6 +70,18 @@ def create_snapshot():
     print("done")
 
     return "Done", 201
+
+
+@app.route("/downloadsnapshot")
+def downloadfile():
+    path = "../snapshot/snapshot.py"
+    return send_file(path, as_attachment=True)
+
+
+@app.route("/downloadrawlog")
+def downloadrawlog():
+    path = "../snapshot/rawLog.py"
+    return send_file(path, as_attachment=True)
 
 
 if __name__ == "__main__":

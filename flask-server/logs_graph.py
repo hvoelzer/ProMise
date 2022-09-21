@@ -36,6 +36,9 @@ class Graph:
         self.nr_trie_nodes = 1
         self.map_trie_graph = {0: [0]}
 
+        # I just need this info stored somewhere:
+        self.logdetails = {}
+
     # Whenever a diff (filter) is created we need to generate a new node
     # [operation] or list of diff/filter that have been applied in the path
     def addOperation(self, currentNode, newEventLog, operations):

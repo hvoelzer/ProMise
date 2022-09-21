@@ -30,5 +30,11 @@ export default class Backend{
     snapshot(){
         return this.url + "/snapshot"
     }
+    downloadsnapshot(){
+        return this.url + "/downloadsnapshot"
+    }
+    downloadrawLog(){
+        return this.url + "/downloadrawlog"
+    }
 
 }

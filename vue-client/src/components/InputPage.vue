@@ -90,7 +90,7 @@ handleFileUpload( event ){
     submitForm(){
       try {
 
-        this.axios.post(this.$backend.getUrlData(),this.form)
+        this.axios.post(this.$backend.getUrlData(),this.form, {headers: {"Access-Control-Allow-Origin" : "http://127.0.0.1:5000"}})
         .then(() => {
          
           console.log("IMPORT SUCCEEDED");

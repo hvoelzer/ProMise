@@ -8,6 +8,7 @@
         
     </div>
     <div class="page">
+      
 
       <svg width="100%" height="100" id="clean-graph" v-if="cleanGraph">
       </svg>
@@ -26,7 +27,7 @@ export default {
 
   data() {
     return {
-
+      
       edges: {},
       svgElementsToRemoveClean: [],
       svgElementsToRemoveHistory: [],
@@ -212,6 +213,25 @@ export default {
       this.axios.post(this.$backend.snapshot(), {"id" : id})
           .then(() => {
             console.log("Snapshot SUCCEEDED");
+            this.axios.get(this.$backend.downloadsnapshot(), { responseType: 'blob' })
+              .then(response => {
+                const blob = new Blob([response.data], { type: 'application/python' })
+                const link = document.createElement('a')
+                link.href = URL.createObjectURL(blob)
+                link.download = "snapshot.py"
+                link.click()
+                URL.revokeObjectURL(link.href)
+              }).catch(console.error)
+              this.axios.get(this.$backend.downloadrawLog(), { responseType: 'blob' })
+              .then(response => {
+                const blob = new Blob([response.data], { type: 'application/python' })
+                const link = document.createElement('a')
+                link.href = URL.createObjectURL(blob)
+                link.download = "rawLog.py"
+                link.click()
+                URL.revokeObjectURL(link.href)
+              }).catch(console.error)
+
           })
     },
     changeLog(id) {
