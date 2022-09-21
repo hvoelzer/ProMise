@@ -308,7 +308,7 @@ export default {
       circle.setAttribute("cy", y + "");
       circle.setAttribute("r", 50);
 
-      circle.setAttribute("fill", this.cleanGraph? (this.edges.map[this.selectedNode] == id? 'aqua' : this.colorList[id]): (this.selectedNode == id? 'aqua' : this.colorList[this.edges.map[id]] ));
+      circle.setAttribute("fill", this.cleanGraph? (this.edges.map[this.selectedNode] == id? 'aqua' : this.colorList[id]) : (this.selectedNode == id? 'aqua' : this.colorList[this.edges.map[id]] ));
       circle.setAttribute("stroke", "black");
       circle.setAttribute("id", id);
       if (!this.cleanGraph){

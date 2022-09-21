@@ -169,4 +169,18 @@ for trace in eventlog.traces:
                 if event.activity == "a":
                     indicesToRemove.append(count)
             trace.removeEvents(indicesToRemove)
+#This filters out activity b.
+for trace in eventlog.traces:
+            indicesToRemove = []
+            for count, event in enumerate(trace.events):
+                if event.activity == "b":
+                    indicesToRemove.append(count)
+            trace.removeEvents(indicesToRemove)
+#This filters out activity T11_Bed.
+for trace in eventlog.traces:
+            indicesToRemove = []
+            for count, event in enumerate(trace.events):
+                if event.activity == "T11_Bed":
+                    indicesToRemove.append(count)
+            trace.removeEvents(indicesToRemove)
 eventlog.export("final.csv")
