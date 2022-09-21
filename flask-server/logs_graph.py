@@ -44,6 +44,7 @@ class Graph:
     def addOperation(self, currentNode, newEventLog, operations):
         id = self.trie.search(operations)
         if not id:
+
             # NOTE is going to be a problem if we delete nodes
             newNodeNotChecked = Node(newEventLog, len(self.nodes))
 

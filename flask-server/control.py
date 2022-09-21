@@ -71,9 +71,9 @@ class Control():
         return str({"levels": levels, "edges": ed, "map": map}).replace("\'", "\"")
 
     def getEventLog(self):
-        log = self.graph.cleanNodeFromTrieNode(self.graph.lastNode)
+        log = self.graph.lastNode
         nod, ed, history = self.graph.getCleanGraphTrie(False)
-
+        print("LASTNODEID", self.graph.lastNode)
         return str({"logId": self.graph.lastNode, "eventLog": self.graph.getEventLogFromId(log), "history": history[self.graph.lastNode]}).replace("\'", "\"")
 
     def changeLastNode(self, json):
