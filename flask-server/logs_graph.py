@@ -22,6 +22,9 @@ class Node:  # alias Log
     def getEventLog(self):
         return self.eventLog.getAsList()
 
+    def getDescription(self):
+        return self.eventLog.getDescription()
+
 
 class Graph:
 
@@ -94,7 +97,7 @@ class Graph:
         return result
 
     def getCleanGraph(self):
-        result = [{"id": 0, "nodes": [0]}]
+        result = [{"id": 0, "nodes": [{"id": 0, "description" : self.nodes[0].getDescription()}]}]
         self.getCleanGraphRecorsive(1, [0], [0], result)
         return result
 
@@ -104,7 +107,7 @@ class Graph:
         for previousNode in nodesFromPreviousLayer:
             for operation, node in self.adjecency_graph[previousNode]:
                 if node not in alradyScoutedNodes:
-                    nodes.append(node)
+                    nodes.append({"id": node, "description" : self.nodes[node].getDescription()})
                     alradyScoutedNodes.append(node)
                     nodesForNextLayer.append(node)
         if len(nodes) > 0:
@@ -113,7 +116,7 @@ class Graph:
                 level + 1, alradyScoutedNodes, nodesForNextLayer, result)
 
     def getCleanGraphTrie(self, for_snapshot):
-        nodes = {"0": [0]}
+        nodes = {"0": [{"id": 0, "description" : self.nodes[0].getDescription()}]}
         edges = []
         node_history = {0: []}
         self.getCleanGraphRecursiveTrie(
@@ -128,7 +131,7 @@ class Graph:
                 next.append(current[key])
                 if level+1 not in nodes:
                     nodes[level+1] = []
-                nodes[level+1].append(current[key]["#"])
+                nodes[level+1].append({"id": current[key]["#"], "description" : self.nodes[current[key]["#"]].getDescription()})
                 history = node_history[current["#"]].copy()
                 if (for_snapshot):
                     history.append(key)

@@ -1,14 +1,14 @@
 <template>
   <div>
     <div class="newpanel">
-        <br>
-          <button @click="showCleanGraph" class="graphsButtons">Clean <br> Graph</button>
-       <br>
-          <button @click="showHistoryGraph" class="graphsButtons">History <br> Graph</button>
-        
+      <br>
+      <button @click="showCleanGraph" class="graphsButtons">Clean <br> Graph</button>
+      <br>
+      <button @click="showHistoryGraph" class="graphsButtons">History <br> Graph</button>
+
     </div>
     <div class="page">
-      
+
 
       <svg width="100%" height="100" id="clean-graph" v-if="cleanGraph">
       </svg>
@@ -27,7 +27,7 @@ export default {
 
   data() {
     return {
-      
+
       edges: {},
       svgElementsToRemoveClean: [],
       svgElementsToRemoveHistory: [],
@@ -36,8 +36,8 @@ export default {
       clicks: 0,
       timer: null,
       cleanGraph: true,
-      colorList: ["red","blue","pink","yellow","green","orange","purple"],
-      
+      colorList: ["red", "blue", "pink", "yellow", "green", "orange", "purple"],
+
 
     }
   },
@@ -88,6 +88,10 @@ export default {
       var arrowpoint;
       var xParent;
       var yParent;
+      var rectangle
+      var rectHeight = 30;
+      var rectWidth = 150;
+      var cornerRadius = 20
       if (node1 != node2) {   // TODO at some point address selfloops
         var parentNode = document.getElementById(node1);
         var childNode = document.getElementById(node2);
@@ -123,7 +127,19 @@ export default {
         label.setAttribute("text-anchor", "middle");
         label.textContent = operation;
 
+        var rectX = parseFloat(x - (rectWidth / 2))
+        var rectY = parseFloat(y - (rectHeight / 2) - 4)
+        rectangle = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        rectangle.setAttribute("x", rectX);
+        rectangle.setAttribute("y", rectY);
+        rectangle.setAttribute("rx", cornerRadius);
+        rectangle.setAttribute("ry", cornerRadius);
+        rectangle.setAttribute("width", rectWidth);
+        rectangle.setAttribute("height", rectHeight);
+        rectangle.setAttribute("fill", "gray");
+
         graph.appendChild(edge);
+        graph.appendChild(rectangle);
         graph.appendChild(label);
 
 
@@ -161,7 +177,7 @@ export default {
           point3y = parseFloat(point3xI) * parseFloat(cosAngle) + parseFloat(point3yI) * parseFloat(sinAngle)
         }
         else {
-          
+
           point2x = parseFloat(point2xI) * parseFloat(cosAngle) + parseFloat(point2yI) * parseFloat(sinAngle)
           point2y = parseFloat(point2xI) * parseFloat(sinAngle) - parseFloat(point2yI) * parseFloat(cosAngle)
 
@@ -181,22 +197,23 @@ export default {
         arrowpoint.setAttribute("stroke-width", "3");
 
         graph.appendChild(arrowpoint);
-        
+
 
         if (this.cleanGraph) {
 
           this.svgElementsToRemoveClean.push(edge)
           this.svgElementsToRemoveClean.push(label)
           this.svgElementsToRemoveClean.push(arrowpoint)
+          this.svgElementsToRemoveClean.push(rectangle);
         }
         else {
           this.svgElementsToRemoveHistory.push(edge)
           this.svgElementsToRemoveHistory.push(label)
           this.svgElementsToRemoveHistory.push(arrowpoint)
-
+          this.svgElementsToRemoveHistory.push(rectangle);
         }
       }
-      else{
+      else {
         var node = document.getElementById(node1);
         xParent = parseFloat(node.getAttribute("cx").replace("%", '')) / 100 * this.getWidth() * 0.8;
         yParent = node.getAttribute("cy");
@@ -211,27 +228,46 @@ export default {
         edge.setAttribute("fill", "none");
         edge.setAttribute("stroke", "red");
         edge.setAttribute("stroke-width", "3");
-        graph.appendChild(edge);
 
-        var xlabel = xParent + 70 + 7
-        var ylabel = yParent - 60
+        var xlabel = xParent + 110 + 7
+        var ylabel = yParent - 50
         label = document.createElementNS("http://www.w3.org/2000/svg", "text");
         label.setAttribute("x", xlabel);
         label.setAttribute("y", ylabel);
         label.setAttribute("text-anchor", "middle");
         label.textContent = operation;
+
+
+
+        var rectXself = parseFloat(xlabel - (rectWidth / 2))
+        var rectYself = parseFloat(ylabel - (rectHeight / 2) - 4)
+        rectangle = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        rectangle.setAttribute("x", rectXself);
+        rectangle.setAttribute("y", rectYself);
+        rectangle.setAttribute("rx", cornerRadius);
+        rectangle.setAttribute("ry", cornerRadius);
+        rectangle.setAttribute("width", rectWidth);
+        rectangle.setAttribute("height", rectHeight);
+        rectangle.setAttribute("fill", "gray");
+
+        graph.appendChild(edge);
+        graph.appendChild(rectangle);
         graph.appendChild(label);
+
 
         if (this.cleanGraph) {
 
-        this.svgElementsToRemoveClean.push(edge)
-        this.svgElementsToRemoveClean.push(label)
-        this.svgElementsToRemoveClean.push(arrowpoint)
+          this.svgElementsToRemoveClean.push(edge)
+          this.svgElementsToRemoveClean.push(label)
+          this.svgElementsToRemoveClean.push(arrowpoint)
+          this.svgElementsToRemoveClean.push(rectangle)
+
         }
         else {
-        this.svgElementsToRemoveHistory.push(edge)
-        this.svgElementsToRemoveHistory.push(label)
-        this.svgElementsToRemoveHistory.push(arrowpoint)
+          this.svgElementsToRemoveHistory.push(edge)
+          this.svgElementsToRemoveHistory.push(label)
+          this.svgElementsToRemoveHistory.push(arrowpoint)
+          this.svgElementsToRemoveHistory.push(rectangle)
 
         }
 
@@ -252,37 +288,47 @@ export default {
     },
     snapshot(id) {
       console.log(id)
-      this.axios.post(this.$backend.snapshot(), {"id" : id})
-          .then(() => {
-            console.log("Snapshot SUCCEEDED");
-            this.axios.get(this.$backend.downloadsnapshot(), { responseType: 'blob' })
-              .then(response => {
-                const blob = new Blob([response.data], { type: 'application/python' })
-                const link = document.createElement('a')
-                link.href = URL.createObjectURL(blob)
-                link.download = "snapshot.py"
-                link.click()
-                URL.revokeObjectURL(link.href)
-              }).catch(console.error)
-              this.axios.get(this.$backend.downloadrawLog(), { responseType: 'blob' })
-              .then(response => {
-                const blob = new Blob([response.data], { type: 'application/python' })
-                const link = document.createElement('a')
-                link.href = URL.createObjectURL(blob)
-                link.download = "rawLog.py"
-                link.click()
-                URL.revokeObjectURL(link.href)
-              }).catch(console.error)
+      this.axios.post(this.$backend.snapshot(), { "id": id })
+        .then(() => {
+          console.log("Snapshot SUCCEEDED");
+          this.axios.get(this.$backend.downloadsnapshot(), { responseType: 'blob' })
+            .then(response => {
+              const blob = new Blob([response.data], { type: 'application/python' })
+              const link = document.createElement('a')
+              link.href = URL.createObjectURL(blob)
+              link.download = "snapshot.py"
+              link.click()
+              URL.revokeObjectURL(link.href)
+            }).catch(console.error)
+          this.axios.get(this.$backend.downloadrawLog(), { responseType: 'blob' })
+            .then(response => {
+              const blob = new Blob([response.data], { type: 'application/python' })
+              const link = document.createElement('a')
+              link.href = URL.createObjectURL(blob)
+              link.download = "rawLog.py"
+              link.click()
+              URL.revokeObjectURL(link.href)
+            }).catch(console.error)
 
-          })
+        })
     },
     changeLog(id) {
       this.clicks++;
       var oldSelectedNode = document.getElementById(this.selectedNode);
-      oldSelectedNode.setAttribute("fill", (this.cleanGraph)? this.colorList[oldSelectedNode.id] : this.colorList[this.edges.map[oldSelectedNode.id]])
+      oldSelectedNode.setAttribute("stroke", "black")
+      oldSelectedNode.setAttribute("stroke-width", 1)
+
+      var oldDescription = document.getElementById("description" + this.selectedNode);
+      oldDescription.setAttribute("visibility", "hidden")
+
       this.selectedNode = id
       var newSelectedNode = document.getElementById(this.selectedNode);
-      newSelectedNode.setAttribute("fill", "aqua")
+      newSelectedNode.setAttribute("stroke", "yellow")
+      newSelectedNode.setAttribute("stroke-width", 10)
+
+      var newDescription = document.getElementById("description" + this.selectedNode);
+      newDescription.setAttribute("visibility", "visible")
+
       this.$emit('changeSelected', id)
       this.postChangeOfLog(id)
       if (this.clicks === 1) {
@@ -298,21 +344,24 @@ export default {
     toFilterView(id) {
       console.log(id)
     },
-    drawNode(x, y, id) {
+    drawNode(x, y, node) {
       var graph = document.getElementById(this.svg_id);
       var circle;
       var label
+      var id = node.id
+      var description
 
       circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
       circle.setAttribute("cx", x + "%");
       circle.setAttribute("cy", y + "");
       circle.setAttribute("r", 50);
 
-      circle.setAttribute("fill", this.cleanGraph? (this.edges.map[this.selectedNode] == id? 'aqua' : this.colorList[id]) : (this.selectedNode == id? 'aqua' : this.colorList[this.edges.map[id]] ));
-      circle.setAttribute("stroke", "black");
+      circle.setAttribute("fill", this.cleanGraph ? this.colorList[id] : this.colorList[this.edges.map[id]]);
+      circle.setAttribute("stroke", this.cleanGraph ? (this.edges.map[this.selectedNode] == id ? 'yellow' : 'black') : (this.selectedNode == id ? 'yellow' : 'black'));
+      circle.setAttribute("stroke-width", this.cleanGraph ? (this.edges.map[this.selectedNode] == id ? 10 : 1) : (this.selectedNode == id ? 10 : 1));
       circle.setAttribute("id", id);
-      if (!this.cleanGraph){
-        circle.addEventListener('contextmenu', (e) => {e.preventDefault();this.snapshot(id);}, false);
+      if (!this.cleanGraph) {
+        circle.addEventListener('contextmenu', (e) => { e.preventDefault(); this.snapshot(id); }, false);
         circle.addEventListener("click", this.changeLog.bind(null, id), false);
       }
       label = document.createElementNS("http://www.w3.org/2000/svg", "text");
@@ -321,13 +370,36 @@ export default {
       label.setAttribute("text-anchor", "middle");
       label.textContent = id
 
+      
+      description = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      description.setAttribute("x", 90 + "%");
+      description.setAttribute("y", 100 + "");
+      description.setAttribute("id", "description"+id);
+      this.multipleLines(node.description, 15, description)
+      description.setAttribute("visibility", "hidden");
+
       graph.appendChild(circle);
       graph.appendChild(label);
+      graph.appendChild(description);
+
+      if (this.edges.map[this.selectedNode] == id){
+        description.setAttribute("visibility", "visible");
+      }
 
     },
+    multipleLines(str, lineHeight, description) {
+      for (var line in str.split('\n')){
+        var tspan = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
+        tspan.setAttribute("x", 80 + "%");
+        tspan.setAttribute("y", parseFloat(30  + line * lineHeight));
+        tspan.textContent = str.split('\n')[line] 
+        description.appendChild(tspan);
+      }
+    },
+
     drawGraph() {
       var layerHeight = 100
-      var betweenLayersHeight = 60
+      var betweenLayersHeight = 70
       // draw Nodes
       for (var level in this.edges.levels) {
         var nNodesInRow = this.edges.levels[level].nodes.length
@@ -348,15 +420,15 @@ export default {
       }
     },
     removeOldEdges() {
-      for (var element in this.cleanGraph? this.svgElementsToRemoveClean : this.svgElementsToRemoveHistory) {
-        console.log(this.cleanGraph? this.svgElementsToRemoveClean[element] : this.svgElementsToRemoveHistory[element])
-        document.getElementById(this.svg_id).removeChild(this.cleanGraph? this.svgElementsToRemoveClean[element] : this.svgElementsToRemoveHistory[element]);
+      for (var element in this.cleanGraph ? this.svgElementsToRemoveClean : this.svgElementsToRemoveHistory) {
+        console.log(this.cleanGraph ? this.svgElementsToRemoveClean[element] : this.svgElementsToRemoveHistory[element])
+        document.getElementById(this.svg_id).removeChild(this.cleanGraph ? this.svgElementsToRemoveClean[element] : this.svgElementsToRemoveHistory[element]);
       }
-      if (this.cleanGraph){
+      if (this.cleanGraph) {
 
         this.svgElementsToRemoveClean = [];
       }
-      else{
+      else {
         this.svgElementsToRemoveHistory = [];
       }
     }
@@ -385,27 +457,27 @@ export default {
 }
 
 .graphsButtons {
-    margin-right: 20px;
-    margin-top: 13px;
-    align-self: center center;
-    margin-left: 20px;
-    width: 50px;
-    height: 50px;
-    cursor: pointer;
-    text-align: center;
-    font-family: Avenir, Helvetica, Arial, sans-serif;
-    font-size: 11px;
-    font-weight: 300;
-    color: rgb(0, 0, 0);
-    border-radius: 5px;
-    border-color: rgb(226, 226, 226);
-    background-size: 88px;
-    border-style: solid;
+  margin-right: 20px;
+  margin-top: 13px;
+  align-self: center center;
+  margin-left: 20px;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  text-align: center;
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-size: 11px;
+  font-weight: 300;
+  color: rgb(0, 0, 0);
+  border-radius: 5px;
+  border-color: rgb(226, 226, 226);
+  background-size: 88px;
+  border-style: solid;
 }
 
 .graphsButtons:hover {
-    font-size: 13px;
-    font-weight: 400;
-    
+  font-size: 13px;
+  font-weight: 400;
+
 }
 </style>

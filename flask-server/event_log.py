@@ -150,3 +150,6 @@ class EventLog:
                   "tracesNames": tracesNames}
 
         return result
+
+    def getDescription(self):
+        return self.__repr__()
