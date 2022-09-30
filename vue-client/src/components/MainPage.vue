@@ -7,7 +7,7 @@
             <button @click="goToFilterView" class="navigationButton filterButton" ></button>
 
         </div>
-        <router-view :selected="this.selected" @changeSelected="newSelected" class="page" />
+        <router-view :selected="this.selected" @changeSelected="newSelected" :labelnodedict="this.labelnodedict" @changeDict="newLabelDict" class="page" />
     </div>
 </template>
 
@@ -17,10 +17,14 @@ import router from '@/router';
 export default {
     data() {
         return {
+            labelnodedict: {},
             selected: 0
         }
     },
     methods: {
+        newLabelDict(dict) {
+            this.labelnodedict = dict
+        },
         newSelected(id) {
             this.selected = id
         },

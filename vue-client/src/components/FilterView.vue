@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="filterpanel">
-      <h3>Working on: <br> EventLog {{ filter.id }}</h3>
+      <h3>Working on: <br> EventLog {{ (labelnodedict[filter.id] !== undefined)?  labelnodedict[filter.id] : filter.id }}</h3>
       <button @click="submitFilter('filterOut')"> filter out </button>
       <input type="text" v-model="filter.activityName" placeholder="Activity" />
     </div>
@@ -35,12 +35,13 @@
 <script>
 export default {
   name: 'App',
-  props: ['selected'],
+  props: ['selected','labelnodedict'],
   components: {
 
   },
   data() {
     return {
+      
       filter: {
         filterName: "",
         activityName: "",

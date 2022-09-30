@@ -9,7 +9,14 @@
     </div>
     <div class="page">
 
-
+      <div class="popup"
+			v-if="showPopup" 
+			>
+      <h>Node {{popupid}}</h>
+      <input v-model="nodelabel"/>
+			<button @click="labelNode">Submit Label</button>
+      <button @click="snapshot">Get Snapshot</button>
+		</div>
       <svg width="100%" height="100" id="clean-graph" v-if="cleanGraph">
       </svg>
       <svg width="100%" height="100" id="history-view" v-else>
@@ -19,15 +26,24 @@
 </template>
 
 <script>
+
 import router from '@/router';
+
+
 
 export default {
   name: 'App',
-  props: ['selected'],
+  props: ['selected','labelnodedict'],
 
   data() {
-    return {
+ 
 
+    return {
+      mapcleantohistory : {},
+      nodelabeldict : this.labelnodedict,
+      nodelabel : "0",
+      popupid : 0,
+      showPopup: false,
       edges: {},
       svgElementsToRemoveClean: [],
       svgElementsToRemoveHistory: [],
@@ -42,6 +58,14 @@ export default {
     }
   },
   methods: {
+    labelNode() {
+      this.showPopup = false;
+      this.nodelabeldict[this.popupid] = this.nodelabel;
+      var label = document.getElementById("label"+this.popupid);
+      label.textContent = this.nodelabel;
+      this.$emit('changeDict', this.nodelabeldict)
+    },
+
     showCleanGraph() {
       this.cleanGraph = true
       this.svgElementsToRemoveClean = []
@@ -55,7 +79,7 @@ export default {
       this.getGraph()
     },
     getGraph() {
-
+      this.showPopup = false;
       try {
         this.fetch_from = this.cleanGraph ? this.$backend.getGraph() : this.$backend.getHistoryGraph()
         this.svg_id = this.cleanGraph ? 'clean-graph' : 'history-view'
@@ -63,6 +87,8 @@ export default {
           .then((json) => {
 
             this.edges = json.data;
+            this.invertMap(this.edges.map)
+            console.log(this.edges.map)
             console.log(this.edges)
             this.drawGraph()
             console.log("GET GRAPH SUCCEEDED");
@@ -278,7 +304,7 @@ export default {
       try {
         this.axios.post(this.$backend.changeSelectedNode(), { "id": id })
           .then(() => {
-            console.log("CHANGE SELECTED ID IN BACKEND");
+            console.log("CHANGED SELECTED ID IN BACKEND");
           })
       }
       catch (e) {
@@ -286,9 +312,9 @@ export default {
       }
 
     },
-    snapshot(id) {
-      console.log(id)
-      this.axios.post(this.$backend.snapshot(), { "id": id })
+    snapshot() {
+      this.showPopup = false;
+      this.axios.post(this.$backend.snapshot(), { "id": this.popupid })
         .then(() => {
           console.log("Snapshot SUCCEEDED");
           this.axios.get(this.$backend.downloadsnapshot(), { responseType: 'blob' })
@@ -344,10 +370,34 @@ export default {
     toFilterView(id) {
       console.log(id)
     },
+    invertMap(map){
+      var inverse = {};
+      for (const [key, value] of Object.entries(map)){
+        inverse[value] !== undefined ? inverse[value].push(key) : inverse[value] = [key]
+      }
+      this.mapcleantohistory = inverse
+    },
+    createCleanLabel(id){
+      console.log(this.mapcleantohistory)
+      var ids = this.mapcleantohistory[id]
+      var label = ""
+      for (const i in ids){
+        var value = ids[i]
+        if (this.nodelabeldict[value] !== undefined){
+          label += '\n' + this.nodelabeldict[value]
+        }else {
+
+          label += '\n' +value
+        }
+      }
+      return label
+    },
+
     drawNode(x, y, node) {
       var graph = document.getElementById(this.svg_id);
       var circle;
       var label
+
       var id = node.id
       var description
 
@@ -360,15 +410,23 @@ export default {
       circle.setAttribute("stroke", this.cleanGraph ? (this.edges.map[this.selectedNode] == id ? 'yellow' : 'black') : (this.selectedNode == id ? 'yellow' : 'black'));
       circle.setAttribute("stroke-width", this.cleanGraph ? (this.edges.map[this.selectedNode] == id ? 10 : 1) : (this.selectedNode == id ? 10 : 1));
       circle.setAttribute("id", id);
-      if (!this.cleanGraph) {
-        circle.addEventListener('contextmenu', (e) => { e.preventDefault(); this.snapshot(id); }, false);
-        circle.addEventListener("click", this.changeLog.bind(null, id), false);
-      }
+      
       label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      label.setAttribute("id", "label"+id);
       label.setAttribute("x", x + "%");
       label.setAttribute("y", y + "");
       label.setAttribute("text-anchor", "middle");
-      label.textContent = id
+      if (this.cleanGraph){
+        this.multipleLines(this.createCleanLabel(id),15,label,x,y-30)
+
+      }else{
+        label.textContent = (this.nodelabeldict[id] !== undefined)? this.nodelabeldict[id]  : id  
+      }
+      if (!this.cleanGraph) {
+        circle.addEventListener('contextmenu', (e) => { e.preventDefault(); this.nodelabel = label.textContent; this.popupid = id; this.showPopup = true; }, false);
+        circle.addEventListener("click", this.changeLog.bind(null, id), false);
+      }
+      
 
       
       description = document.createElementNS("http://www.w3.org/2000/svg", "text");
@@ -387,11 +445,12 @@ export default {
       }
 
     },
-    multipleLines(str, lineHeight, description) {
+
+    multipleLines(str, lineHeight, description,x=80,y=30) {
       for (var line in str.split('\n')){
         var tspan = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
-        tspan.setAttribute("x", 80 + "%");
-        tspan.setAttribute("y", parseFloat(30  + line * lineHeight));
+        tspan.setAttribute("x", x + "%");
+        tspan.setAttribute("y", parseFloat(y  + line * lineHeight));
         tspan.textContent = str.split('\n')[line] 
         description.appendChild(tspan);
       }
@@ -431,12 +490,17 @@ export default {
       else {
         this.svgElementsToRemoveHistory = [];
       }
+
+
     }
+    
+    
   },
   mounted() {
     this.getGraph();
     window.addEventListener('resize', this.drawEdges)
   }
+  
 
 }
 </script>
@@ -479,5 +543,19 @@ export default {
   font-size: 13px;
   font-weight: 400;
 
+}
+.popup {
+  
+  border: 2px solid black;
+  
+  
+  position: absolute;
+
+  height: 80;
+  width: 120;
+  display: flex;
+  flex-direction: column;
+  margin-left: 10px;
+  margin-top: 10px;
 }
 </style>

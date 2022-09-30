@@ -158,15 +158,11 @@ class EventLog:
 
         return result
 
+    def getDescription(self):
+        return self.__repr__()
+
 path = " type in your path here "
 eventlog = EventLog()
 eventlog.populateTracesFromCSV(
 rawlog, "%Y-%m-%dT%H:%M:%S", 3, 5, 0)
-#This filters out activity a.
-for trace in eventlog.traces:
-            indicesToRemove = []
-            for count, event in enumerate(trace.events):
-                if event.activity == "a":
-                    indicesToRemove.append(count)
-            trace.removeEvents(indicesToRemove)
 eventlog.export("final.csv")
