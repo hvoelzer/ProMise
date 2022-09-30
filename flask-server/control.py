@@ -1,6 +1,6 @@
 from event_log import EventLog
 from logs_graph import Graph
-from filter_class import FilterOut, Filter
+from filter_class import FilterOut, FlowSelection, ThroughPut, RemoveBehavior
 
 
 class Control():
@@ -9,7 +9,7 @@ class Control():
         self.currentEventLog = EventLog()  # Maybe this is not needed
         self.graph = None
         #self.filters = self.initFilters()
-        self.filtersdict = {"filterOut": FilterOut}
+        self.filtersdict = {"filterOut": FilterOut, "flowSelection": FlowSelection, "throughPut": ThroughPut, "removeBehavior": RemoveBehavior}
 
     def loadRawfile(self, json):
         self.currentEventLog.populateTracesFromCSV(
@@ -19,8 +19,11 @@ class Control():
         self.graph.logdetails = json
         print(self.currentEventLog)
 
+    def parse_parameters(self, parameters_string):
+        return parameters_string.split(";")
+
     def filterFromJson(self, json):  # TODO: this method could probably be written more agile
-        return self.filtersdict[json["filterName"]].generateFilter(json["activityName"])
+        return self.filtersdict[json["filterName"]].generateFilter(self.parse_parameters(json["activityName"]))
 
     # maybe the filter is going to be json format, the idea of the code should still hold
     def applyFilter(self, json):
@@ -96,7 +99,7 @@ class Control():
             "\n\n\neventlog = EventLog()\nif (path_to_file == \"\"):\n    eventlog.populateTracesFromCSV(\nrawlog, \"{0}\", {1}, {2}, {3})\nelse:\n    eventlog.actuallyPopulateTracesFromCSV(path_to_file, timestring, timeColumn, activityColumn, traceColumn, seperator)".format(
                 self.graph.logdetails["timestampformat"], self.graph.logdetails["timestampcolumn"], self.graph.logdetails["activitycolumn"], self.graph.logdetails["tracecolumn"])
 
-        var_string = "#VARIABLES: "
+        var_string = "#VARIABLES: \nSEED = 10\n"
         for i, filter in enumerate(history[json["id"]]):
             cmt = filter.get_comment()
             fct, vars, vals = filter.get_function(i)

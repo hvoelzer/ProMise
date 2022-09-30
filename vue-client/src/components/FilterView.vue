@@ -1,9 +1,17 @@
 <template>
   <div>
     <div class="filterpanel">
-      <h3>Working on: <br> EventLog {{ (labelnodedict[filter.id] !== undefined)?  labelnodedict[filter.id] : filter.id }}</h3>
-      <button @click="submitFilter('filterOut')"> filter out </button>
-      <input type="text" v-model="filter.activityName" placeholder="Activity" />
+      <h3>Working on: <br> EventLog {{ (labelnodedict[filter.id] !== undefined)? labelnodedict[filter.id] : filter.id }}
+      </h3>
+      <table>
+      <tbody>
+      <tr v-for="filter in filters"  v-bind:key="'filter-' + filter">
+        <td><button @click="submitFilter(filter)"> {{filter}} </button></td>
+        <td><input type="text" v-model="filter.activityName" placeholder="Activity" /></td>
+      </tr>
+      </tbody>
+    </table>
+
     </div>
     <div v-if="isEventLogReady" class="page">
       <table class="styled-table">
@@ -16,7 +24,8 @@
         </thead>
         <tbody>
           <tr v-for="(row, rowKey) in eventLog.traces" v-bind:key="'row-' + rowKey">
-            <td v-for="(column, columnKey) in eventLog.traces[rowKey]" v-bind:key="'row-' + rowKey + '-column-' + columnKey">
+            <td v-for="(column, columnKey) in eventLog.traces[rowKey]"
+              v-bind:key="'row-' + rowKey + '-column-' + columnKey">
               {{ eventLog.traces[rowKey][columnKey] }}
             </td>
           </tr>
@@ -35,20 +44,21 @@
 <script>
 export default {
   name: 'App',
-  props: ['selected','labelnodedict'],
+  props: ['selected', 'labelnodedict'],
   components: {
 
   },
   data() {
     return {
-      
+
       filter: {
+        filternames: ["filterOut", "flowSelection", "throughPut", "removeBehavior"],
         filterName: "",
         activityName: "",
         previousOperations: [],
         id: this.selected,
-        
-       
+
+
       },
       eventLog: {},
       array: [],
@@ -105,15 +115,17 @@ export default {
   background-color: aquamarine;
   font-family: Avenir, Helvetica, Arial, sans-serif;
   padding: 8px;
-  
-  color:rgb(10, 48, 0); 
+
+  color: rgb(10, 48, 0);
 
 }
+
 .page {
-    width: 90%;
+  width: 90%;
   display: flex;
 
 }
+
 .profile-main-loader .loader {
   position: relative;
   margin: 0px auto;
@@ -150,34 +162,34 @@ export default {
 }
 
 .styled-table {
-    border-collapse: collapse;
-    font-size: 0.9em;
-    font-family: sans-serif;
-    min-width: 400px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+  border-collapse: collapse;
+  font-size: 0.9em;
+  font-family: sans-serif;
+  min-width: 400px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
 }
 
 .styled-table thead tr {
-    background-color: #009879;
-    color: #ffffff;
-    text-align: left;
+  background-color: #009879;
+  color: #ffffff;
+  text-align: left;
 }
 
 .styled-table th,
 .styled-table td {
-    padding: 12px 15px;
+  padding: 12px 15px;
 }
 
 .styled-table tbody tr {
-    border-bottom: 1px solid #dddddd;
+  border-bottom: 1px solid #dddddd;
 }
 
 .styled-table tbody tr:nth-of-type(even) {
-    background-color: #f3f3f3;
+  background-color: #f3f3f3;
 }
 
 .styled-table tbody tr:last-of-type {
-    border-bottom: 2px solid #009879;
+  border-bottom: 2px solid #009879;
 }
 
 @-webkit-keyframes rotate {
