@@ -1,3 +1,15 @@
+#VARIABLES: 
+filterout0 = "a"
+filterout1 = "b"
+# For using different eventlog (leave path_to_file empty to use original eventlog): 
+path_to_file = "" 
+timestring = ""
+timeColumn = 0
+activityColumn = 0
+traceColumn = 0
+seperator = "," 
+
+
 
 
 
@@ -134,6 +146,25 @@ class EventLog:
                     event[list(event.keys())[activityColumn]])  # activity
                 # extra resources need to be added
 
+    def actuallyPopulateTracesFromCSV(self, csvFile, timestring, timeColumn, activityColumn, traceColumn, seperator):
+        with open(csvFile) as csv_file:
+            csv_reader = csv.reader(csv_file, delimiter=seperator)
+
+            for line_count, event in enumerate(csv_reader):
+                if line_count == 0:
+                    pass
+                else:
+                    if event[traceColumn] != "":  # filter out empty lines
+                        traceIsPresent, trace = self.traceAlreadyPresent(
+                            event[traceColumn])
+                        if not traceIsPresent:
+                            self.traces.append(trace)
+                        trace.addEvent(
+                            self.convert_to_seconds(
+                                event[timeColumn], timestring, 18),  # time in seconds
+                            event[activityColumn])  # activity
+                        # extra resources need to be added
+
     def __repr__(self):
         string = "EventLog: \n"
         for trace in self.traces:
@@ -161,8 +192,26 @@ class EventLog:
     def getDescription(self):
         return self.__repr__()
 
-path = " type in your path here "
+
+
 eventlog = EventLog()
-eventlog.populateTracesFromCSV(
+if (path_to_file == ""):
+    eventlog.populateTracesFromCSV(
 rawlog, "%Y-%m-%dT%H:%M:%S", 3, 5, 0)
+else:
+    eventlog.actuallyPopulateTracesFromCSV(path_to_file, timestring, timeColumn, activityColumn, traceColumn, seperator)
+#This filters out activity a.
+for trace in eventlog.traces:
+            indicesToRemove = []
+            for count, event in enumerate(trace.events):
+                if event.activity == filterout0:
+                    indicesToRemove.append(count)
+            trace.removeEvents(indicesToRemove)
+#This filters out activity b.
+for trace in eventlog.traces:
+            indicesToRemove = []
+            for count, event in enumerate(trace.events):
+                if event.activity == filterout1:
+                    indicesToRemove.append(count)
+            trace.removeEvents(indicesToRemove)
 eventlog.export("final.csv")

@@ -127,6 +127,25 @@ class EventLog:
                     event[list(event.keys())[activityColumn]])  # activity
                 # extra resources need to be added
 
+    def actuallyPopulateTracesFromCSV(self, csvFile, timestring, timeColumn, activityColumn, traceColumn, seperator):
+        with open(csvFile) as csv_file:
+            csv_reader = csv.reader(csv_file, delimiter=seperator)
+
+            for line_count, event in enumerate(csv_reader):
+                if line_count == 0:
+                    pass
+                else:
+                    if event[traceColumn] != "":  # filter out empty lines
+                        traceIsPresent, trace = self.traceAlreadyPresent(
+                            event[traceColumn])
+                        if not traceIsPresent:
+                            self.traces.append(trace)
+                        trace.addEvent(
+                            self.convert_to_seconds(
+                                event[timeColumn], timestring, 18),  # time in seconds
+                            event[activityColumn])  # activity
+                        # extra resources need to be added
+
     def __repr__(self):
         string = "EventLog: \n"
         for trace in self.traces:

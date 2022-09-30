@@ -93,16 +93,21 @@ class Control():
 
         script = "\n\n\n\n #DEPENDENCIES:  \nfrom rawLog import rawlog\n\n " + dep_str
         script = script + \
-            """\npath = \" type in your path here \"\neventlog = EventLog()\neventlog.populateTracesFromCSV(\nrawlog, \"{0}\", {1}, {2}, {3})""".format(
+            "\n\n\neventlog = EventLog()\nif (path_to_file == \"\"):\n    eventlog.populateTracesFromCSV(\nrawlog, \"{0}\", {1}, {2}, {3})\nelse:\n    eventlog.actuallyPopulateTracesFromCSV(path_to_file, timestring, timeColumn, activityColumn, traceColumn, seperator)".format(
                 self.graph.logdetails["timestampformat"], self.graph.logdetails["timestampcolumn"], self.graph.logdetails["activitycolumn"], self.graph.logdetails["tracecolumn"])
 
-        for filter in history[json["id"]]:
+        var_string = "#VARIABLES: "
+        for i, filter in enumerate(history[json["id"]]):
             cmt = filter.get_comment()
-            fct = filter.get_function()
+            fct, vars, vals = filter.get_function(i)
+            for j, var in enumerate(vars):
+                var_string += "\n" + var + " = " + vals[j]
+
             script = script + "\n" + cmt + "\n" + \
                 fct
         print(script)
-        script = script + "\neventlog.export(\"final.csv\")"
+        script = var_string + "\n" + "# For using different eventlog (leave path_to_file empty to use original eventlog): \npath_to_file = \"\" \ntimestring = \"\"\ntimeColumn = 0\nactivityColumn = 0\ntraceColumn = 0\nseperator = \",\" \n\n\n" + script + \
+            "\neventlog.export(\"final.csv\")"
 
         rawlog = "rawlog ={}".format(self.graph.logdetails["content"]["data"])
         with open(rawlogname, 'w') as r:

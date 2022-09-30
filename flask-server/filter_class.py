@@ -50,13 +50,13 @@ class FilterOut(Filter):
             trace.removeEvents(indicesToRemove)
         return eventLog
 
-    def get_function(self):
+    def get_function(self, varnumber):
         return """for trace in eventlog.traces:
             indicesToRemove = []
             for count, event in enumerate(trace.events):
-                if event.activity == \"{}\":
+                if event.activity == filterout{}:
                     indicesToRemove.append(count)
-            trace.removeEvents(indicesToRemove)""".format(self.parameters[0])
+            trace.removeEvents(indicesToRemove)""".format(varnumber), ["filterout{}".format(varnumber)], ["\"" + self.parameters[0] + "\""]
 
     def get_comment(self):
         return "#This filters out activity {}.".format(self.parameters[0])
