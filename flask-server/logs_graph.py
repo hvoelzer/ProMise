@@ -131,7 +131,7 @@ class Graph:
                 next.append(current[key])
                 if level+1 not in nodes:
                     nodes[level+1] = []
-                nodes[level+1].append({"id": current[key]["#"], "description" : self.nodes[current[key]["#"]].getDescription()})
+                nodes[level+1].append({"id": current[key]["#"], "description" : self.nodes[self.cleanNodeFromTrieNode(current[key]["#"])].getDescription()})
                 history = node_history[current["#"]].copy()
                 if (for_snapshot):
                     history.append(key)
