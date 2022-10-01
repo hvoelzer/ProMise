@@ -54,7 +54,6 @@ export default {
       cleanGraph: true,
       colorList: ["red", "blue", "pink", "yellow", "green", "orange", "purple"],
 
-
     }
   },
   methods: {
@@ -115,8 +114,9 @@ export default {
       var xParent;
       var yParent;
       var rectangle
+      var label_n
       var rectHeight = 30;
-      var rectWidth = 150;
+      var rectWidth = 8 * operation.length + 5;
       var cornerRadius = 20
       if (node1 != node2) {   // TODO at some point address selfloops
         var parentNode = document.getElementById(node1);
@@ -145,9 +145,15 @@ export default {
         edge.setAttribute("stroke", "red");
         edge.setAttribute("stroke-width", "3");
 
+        label_n = 0
+        while(document.getElementById("label" + node1 + node2 + label_n) != undefined){
+          label_n += 1;
+        }
+
         var x = parseFloat(parseFloat(xParent) + parseFloat(xChild - xParent) / 2)
-        var y = parseFloat(parseFloat(yParent) + parseFloat(yChild - yParent) / 2)
+        var y = parseFloat(parseFloat(yParent) + parseFloat(yChild - yParent) / 2) + (label_n * 20)
         label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        label.setAttribute("id", "label" + node1 + node2 + label_n);
         label.setAttribute("x", x);
         label.setAttribute("y", y);
         label.setAttribute("text-anchor", "middle");
@@ -254,10 +260,16 @@ export default {
         edge.setAttribute("fill", "none");
         edge.setAttribute("stroke", "red");
         edge.setAttribute("stroke-width", "3");
+        
+        label_n = 0
+        while(document.getElementById("label" + node + node + label_n) != undefined){
+          label_n += 1;
+        }
 
         var xlabel = xParent + 110 + 7
-        var ylabel = yParent - 50
+        var ylabel = yParent - 50 + (label_n * 20)
         label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        label.setAttribute("id", "label" + node + node + label_n);
         label.setAttribute("x", xlabel);
         label.setAttribute("y", ylabel);
         label.setAttribute("text-anchor", "middle");
@@ -275,8 +287,10 @@ export default {
         rectangle.setAttribute("width", rectWidth);
         rectangle.setAttribute("height", rectHeight);
         rectangle.setAttribute("fill", "gray");
+        if (label_n == 0){
 
-        graph.appendChild(edge);
+          graph.appendChild(edge);
+        }
         graph.appendChild(rectangle);
         graph.appendChild(label);
 
@@ -344,16 +358,10 @@ export default {
       oldSelectedNode.setAttribute("stroke", "black")
       oldSelectedNode.setAttribute("stroke-width", 1)
 
-      var oldDescription = document.getElementById("description" + this.selectedNode);
-      oldDescription.setAttribute("visibility", "hidden")
-
       this.selectedNode = id
       var newSelectedNode = document.getElementById(this.selectedNode);
       newSelectedNode.setAttribute("stroke", "yellow")
       newSelectedNode.setAttribute("stroke-width", 10)
-
-      var newDescription = document.getElementById("description" + this.selectedNode);
-      newDescription.setAttribute("visibility", "visible")
 
       this.$emit('changeSelected', id)
       this.postChangeOfLog(id)
@@ -417,7 +425,7 @@ export default {
       label.setAttribute("y", y + "");
       label.setAttribute("text-anchor", "middle");
       if (this.cleanGraph){
-        this.multipleLines(this.createCleanLabel(id),15,label,x,y-30)
+        this.multipleLines(this.createCleanLabel(id),15,label,x,y - parseInt(8 * (this.createCleanLabel(id).match(/\n/g) || []).length))
 
       }else{
         label.textContent = (this.nodelabeldict[id] !== undefined)? this.nodelabeldict[id]  : id  
@@ -430,19 +438,15 @@ export default {
 
       
       description = document.createElementNS("http://www.w3.org/2000/svg", "text");
-      description.setAttribute("x", 90 + "%");
-      description.setAttribute("y", 100 + "");
+      description.setAttribute("x", x + "%");
+      description.setAttribute("y", y + "");
       description.setAttribute("id", "description"+id);
-      this.multipleLines(node.description, 15, description)
-      description.setAttribute("visibility", "hidden");
-
+      this.multipleLines(node.description, 15, description, x + 4, y + 30)
+     
       graph.appendChild(circle);
       graph.appendChild(label);
       graph.appendChild(description);
 
-      if (this.edges.map[this.selectedNode] == id){
-        description.setAttribute("visibility", "visible");
-      }
 
     },
 

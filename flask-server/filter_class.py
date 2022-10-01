@@ -22,7 +22,7 @@ class Filter:
         return {"filterName": self.name, "activityName": self.parameters}
 
     def __hash__(self):
-        return hash((self.name, self.parameters))
+        return hash((self.name, *self.parameters))
 
     def __eq__(self, filter) -> bool:
         return self.name == filter.name and self.parameters == filter.parameters
@@ -60,6 +60,8 @@ class FilterOut(Filter):
                         keep = False
                 if not keep:
                     indicesToRemove.append(count)
+                    break
+        print(indicesToRemove)
         eventLog.removeTraces(indicesToRemove)
         return eventLog
         
@@ -93,24 +95,24 @@ class ThroughPut(Filter):
 
     def filter(self, eventLog):
         event_a = self.parameters[0]
-        throughputtime = self.parameters[1]
-        event_b= self.parameters[2]
+        event_b= self.parameters[1]
+        throughputtime = self.parameters[2]
         
 
         indicesToRemove = []
         for count, trace in enumerate(eventLog.traces):
             keep = False
             time_a = 0
-            for event in enumerate(trace.events):
+            for event in trace.events:
                 if event.activity == event_a:
                     if time_a == 0:
                         time_a = event.time
                 elif event.activity == event_b:
-                    if (time_a != 0 & event.time - time_a > throughputtime):
+                    if (time_a != 0 and event.time - time_a > int(throughputtime)):
                         keep = True
                         break
-                if not keep:
-                    indicesToRemove.append(count)
+            if not keep:
+                indicesToRemove.append(count)
         eventLog.removeTraces(indicesToRemove)
         return eventLog
         
@@ -163,7 +165,7 @@ class FlowSelection(Filter):
                 if not keep:
                     indicesToRemove.append(count)
                 previous_event = event
-        eventLog.removeTraces(indicesToRemove)
+        eventLog.removeTraces(list(set(indicesToRemove)))
         return eventLog
         
     def get_function(self, varnumber):
@@ -201,10 +203,10 @@ class RemoveBehavior(Filter):
         random.seed(SEED)
 
         for trace in eventLog.traces:
-            indicesToRemove = []
-            sample = random.sample(trace, int(len(trace) * float(remove)))
-            indicesToRemove.append(sample)
-            trace.removeEvents(indicesToRemove)
+            sample = random.sample(range(len(trace.events)), int(len(trace.events) * float(remove)))
+            sample.sort()
+            print(sample)
+            trace.removeEvents(sample)
         return eventLog
         
     def get_function(self, varnumber):

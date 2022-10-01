@@ -179,4 +179,7 @@ class EventLog:
         return result
 
     def getDescription(self):
-        return self.__repr__()
+        total = 0
+        for trace in self.traces:
+            total += len(trace.events)
+        return f"cases: {len(self.traces)}, events:{total}"

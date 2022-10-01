@@ -3,11 +3,13 @@
     <div class="filterpanel">
       <h3>Working on: <br> EventLog {{ (labelnodedict[filter.id] !== undefined)? labelnodedict[filter.id] : filter.id }}
       </h3>
-      <table>
+      <input type="text" v-model="filter.activityName" placeholder="Parameters" />
+      <br> 
+      <table class="filter-table">
       <tbody>
-      <tr v-for="filter in filters"  v-bind:key="'filter-' + filter">
-        <td><button @click="submitFilter(filter)"> {{filter}} </button></td>
-        <td><input type="text" v-model="filter.activityName" placeholder="Activity" /></td>
+      <tr v-for="filtername in filternames"  v-bind:key="'filter-' + filtername">
+        <td><button @click="submitFilter(filtername)"> {{filtername}} </button><br>
+          <label>Parameter Format:</label><br> <label>{{parameters[filtername] }}</label></td>
       </tr>
       </tbody>
     </table>
@@ -50,9 +52,13 @@ export default {
   },
   data() {
     return {
-
+      filternames: ["filterOut", "flowSelection", "throughPut", "removeBehavior"],
+      parameters: {filterOut: "Activity or Activities ; = and", 
+                   flowSelection: "Event_1 -> Event_2 ; = ->", 
+                   throughPut: "Event_1; Event_2; time_in_seconds", 
+                   removeBehavior: "Percentage 80% = 0.8", 
+                  },
       filter: {
-        filternames: ["filterOut", "flowSelection", "throughPut", "removeBehavior"],
         filterName: "",
         activityName: "",
         previousOperations: [],
@@ -109,7 +115,7 @@ export default {
 
 <style>
 .filterpanel {
-  width: 10%;
+  width: 20%;
   flex-direction: column;
   display: flex;
   background-color: aquamarine;
@@ -159,6 +165,27 @@ export default {
   -webkit-animation: dash 1.5s ease-in-out infinite, color 6s ease-in-out infinite;
   animation: dash 1.5s ease-in-out infinite, color 6s ease-in-out infinite;
   stroke-linecap: round;
+}
+
+.filter-table {
+  border-collapse: collapse;
+  font-size: 0.9em;
+  font-family: sans-serif;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+.filter-table thead tr {
+  background-color: #009879;
+  color: #ffffff;
+  text-align: left;
+}
+
+.filter-table tbody tr {
+  border-bottom: 1px solid #dddddd;
+}
+
+.filter-table tbody tr:nth-of-type(even) {
+  background-color: #f3f3f3;
 }
 
 .styled-table {

@@ -20,10 +20,15 @@ class Control():
         print(self.currentEventLog)
 
     def parse_parameters(self, parameters_string):
-        return parameters_string.split(";")
+        print(parameters_string)
+        p = parameters_string.split(";")
+        return p
 
     def filterFromJson(self, json):  # TODO: this method could probably be written more agile
         return self.filtersdict[json["filterName"]].generateFilter(self.parse_parameters(json["activityName"]))
+
+    def filterFromJson_no_parsing(self, json):  # TODO: this method could probably be written more agile
+        return self.filtersdict[json["filterName"]].generateFilter(json["activityName"])
 
     # maybe the filter is going to be json format, the idea of the code should still hold
     def applyFilter(self, json):
@@ -35,7 +40,7 @@ class Control():
         filter = self.filterFromJson(json)
 
         allOperations = list(
-            map(self.filterFromJson, json["previousOperations"]))
+            map(self.filterFromJson_no_parsing, json["previousOperations"]))
 
         allOperations.append(filter)
 
