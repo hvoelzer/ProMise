@@ -12,7 +12,7 @@
       <div class="popup"
 			v-if="showPopup" 
 			>
-      <h>Node {{popupid}}</h>
+      <h4>Node {{popupid}}</h4>
       <input v-model="nodelabel"/>
 			<button @click="labelNode">Submit Label</button>
       <button @click="snapshot">Get Snapshot</button>
