@@ -40,6 +40,7 @@ class Trace:
         self.events = []
         self.id = id
         self.timestring = timestring
+        
 
     def addEvent(self, time, activity, *resources):
         if len(self.events) == 0 or self.events[-1].time < time:
@@ -68,6 +69,7 @@ class Trace:
     def removeEvents(self, indices):
         for counter, index in enumerate(indices):
             self.events.pop(index - counter)
+
 
     def __str__(self):
         return f"Trace[id:{self.id}, n_events: {len(self.events)}]"
@@ -101,6 +103,13 @@ class EventLog:
     def removeTraces(self, indices):
         for counter, index in enumerate(indices):
             self.traces.pop(index - counter)
+
+    def remove_empty_traces(self):
+        traces_to_remove = []
+        for i, trace in enumerate(self.traces):
+            if len(trace.events) == 0:
+                traces_to_remove.append(i)
+        self.removeTraces(traces_to_remove)
 
     def traceAlreadyPresent(self, id):
         for trace in self.traces:
@@ -178,8 +187,11 @@ class EventLog:
 
         return result
 
-    def getDescription(self):
+    def get_total_number_events(self):
         total = 0
         for trace in self.traces:
             total += len(trace.events)
-        return f"cases: {len(self.traces)}, events:{total}"
+        return total
+
+    def getDescription(self):
+        return f"cases: {len(self.traces)}, events:{self.get_total_number_events()}"

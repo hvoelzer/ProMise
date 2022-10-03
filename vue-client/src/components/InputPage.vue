@@ -64,8 +64,8 @@ export default {
        
         timestampformat : "%Y-%m-%dT%H:%M:%S",
         tracecolumn: 0,
-        activitycolumn: 5,
-        timestampcolumn: 3,
+        activitycolumn: 2,
+        timestampcolumn: 1,
         file: '',
         content: [],
         parsed: false

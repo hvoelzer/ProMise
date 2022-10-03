@@ -55,7 +55,7 @@ export default {
       filternames: ["filterOut", "flowSelection", "throughPut", "removeBehavior"],
       parameters: {filterOut: "Activity or Activities ; = and", 
                    flowSelection: "Event_1 -> Event_2 ; = ->", 
-                   throughPut: "Event_1; Event_2; time_in_seconds", 
+                   throughPut: "Event_1; Event_2; time_in_seconds; 'longer' or 'shorter'", 
                    removeBehavior: "Percentage 80% = 0.8", 
                   },
       filter: {
