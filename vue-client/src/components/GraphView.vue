@@ -2,9 +2,9 @@
   <div>
     <div class="newpanel">
       <br>
-      <button @click="showCleanGraph" class="graphsButtons">Clean <br> Graph</button>
+      <button id=graphView @click="showCleanGraph" class="graphsButtons">Clean <br> Graph</button>
       <br>
-      <button @click="showHistoryGraph" class="graphsButtons">History <br> Graph</button>
+      <button id=historyView @click="showHistoryGraph" class="graphsButtons">History <br> Graph</button>
 
     </div>
     <div class="page">

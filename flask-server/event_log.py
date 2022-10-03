@@ -2,8 +2,10 @@
 import datetime
 import csv
 
+
 def convert_back_to_string(time, time_string):
-        return datetime.datetime.fromtimestamp(time).strftime(time_string)
+    return datetime.datetime.fromtimestamp(time).strftime(time_string)
+
 
 class Event:
     def __init__(self, time, activity, timestring, *resources):
@@ -29,7 +31,8 @@ class Event:
             elif h == "activity":
                 event.append(self.activity)
             elif h == "time":
-                event.append(convert_back_to_string(self.time, self.timestring))
+                event.append(convert_back_to_string(
+                    self.time, self.timestring))
             else:
                 event.append(self.resources[h])
         return event
@@ -40,17 +43,18 @@ class Trace:
         self.events = []
         self.id = id
         self.timestring = timestring
-        
 
     def addEvent(self, time, activity, *resources):
         if len(self.events) == 0 or self.events[-1].time < time:
-            self.events.append(Event(time, activity, self.timestring, *resources))
+            self.events.append(
+                Event(time, activity, self.timestring, *resources))
         else:
             middle = len(self.events) // 2
             top = len(self.events) - 1
             bottom = 0
             index = self.insertIndex(middle, top, bottom, time)
-            self.events.insert(index, Event(time, activity, self.timestring, *resources))
+            self.events.insert(index, Event(
+                time, activity, self.timestring, *resources))
 
     def insertIndex(self, middle, top, bottom, time):
         if bottom == top:
@@ -69,7 +73,6 @@ class Trace:
     def removeEvents(self, indices):
         for counter, index in enumerate(indices):
             self.events.pop(index - counter)
-
 
     def __str__(self):
         return f"Trace[id:{self.id}, n_events: {len(self.events)}]"
@@ -128,9 +131,10 @@ class EventLog:
     def convert_to_seconds(self, time, time_string, number_chars_timestamp):
         t = datetime.datetime.strptime(
             time[0:number_chars_timestamp], time_string)
-        return (t-datetime.datetime(1970,1,1,0,0,0)).total_seconds()
+        return (t-datetime.datetime(1970, 1, 1, 0, 0, 0)).total_seconds()
 
     def populateTracesFromCSV(self, csvFile, timestring, timeColumn, activityColumn, traceColumn):
+        self.traces = []
         self.timestring = timestring
         for event in csvFile:
             if event[list(event.keys())[traceColumn]] != "":  # filter out empty lines
@@ -141,8 +145,9 @@ class EventLog:
                 trace.addEvent(
                     self.convert_to_seconds(
                         event[list(event.keys())[timeColumn]], timestring, 19),  # time in seconds
-                    event[list(event.keys())[activityColumn]])  # activity
-                # extra resources need to be added
+                    event[list(event.keys())[activityColumn]])
+        # activity
+        # extra resources need to be added
 
     def actuallyPopulateTracesFromCSV(self, csvFile, timestring, timeColumn, activityColumn, traceColumn, seperator):
         with open(csvFile) as csv_file:

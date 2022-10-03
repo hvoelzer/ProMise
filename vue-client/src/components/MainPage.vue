@@ -2,9 +2,9 @@
     <div class="parent">
         <div class="panel">
             <br>
-            <button @click="goToGraphView" class="navigationButton graphButton" ></button>
+            <button id=graphView @click="goToGraphView" class="navigationButton graphButton" ></button>
             <br>
-            <button @click="goToFilterView" class="navigationButton filterButton" ></button>
+            <button id=filterView @click="goToFilterView" class="navigationButton filterButton" ></button>
 
         </div>
         <router-view :selected="this.selected" @changeSelected="newSelected" :labelnodedict="this.labelnodedict" @changeDict="newLabelDict" class="page" />

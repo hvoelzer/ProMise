@@ -8,14 +8,14 @@
       <table class="filter-table">
       <tbody>
       <tr v-for="filtername in filternames"  v-bind:key="'filter-' + filtername">
-        <td><button @click="submitFilter(filtername)"> {{filtername}} </button><br>
+        <td><button  @click="submitFilter(filtername)"> {{filtername}} </button><br>
           <label>Parameter Format:</label><br> <label>{{parameters[filtername] }}</label></td>
       </tr>
       </tbody>
     </table>
 
     </div>
-    <div v-if="isEventLogReady" class="page">
+    <div class="page">
       <table class="styled-table">
         <thead>
           <tr>
@@ -35,11 +35,11 @@
       </table>
     </div>
 
-    <div class="loader" v-else>
+    <!-- <div class="loader" v-else>
       <svg class="circular-loader" viewBox="25 25 50 50">
         <circle class="loader-path" cx="50" cy="50" r="20" fill="none" stroke="#70c542" stroke-width="2" />
       </svg>
-    </div>
+    </div> -->
   </div>
 </template>
 
