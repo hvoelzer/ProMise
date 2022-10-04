@@ -3,6 +3,7 @@ import random
 
 SEED = 10
 
+
 class Filter:
 
     def __init__(self, parameters) -> None:
@@ -34,10 +35,10 @@ class Filter:
         pass
 
     def parameters_to_string(self):
-        parameters = ""
+        string = ""
         for parameter in self.parameters:
-            name += " and " + parameter
-        return parameters[5:len(parameters)]
+            string += " and " + parameter
+        return string
 
     @staticmethod
     def generateFilter(parameters):
@@ -62,21 +63,19 @@ class FilterOut(Filter):
                 indicesToRemove.append(count)
         eventLog.removeTraces(indicesToRemove)
         return eventLog
-        
+
     def get_function(self, varnumber):
         return """indicesToRemove = []
-        for count, trace in enumerate(eventLog.traces):
-            bool_list = [True for _ in range(len(self.parameters))]
-            for event in enumerate(trace.events):
-                for i, par in enumerate(filterout{}):
-                    if event.activity == par:
-                        bool_list[i] = False
-            if sum(bool_list) == 0:
-                indicesToRemove.append(count)
-        eventLog.removeTraces(indicesToRemove)""".format(varnumber), ["filterout{}".format(varnumber)], [self.parameters]
+for count, trace in enumerate(eventLog.traces):
+    bool_list = [True for _ in range(len(filterout{}))]
+    for event in trace.events:
+        for i, par in enumerate(filterout{}):
+            if event.activity == par:
+                bool_list[i] = False
+        if sum(bool_list) == 0:
+            indicesToRemove.append(count)
+eventLog.removeTraces(indicesToRemove)""".format(varnumber, varnumber), ["filterout{}".format(varnumber)], [self.parameters]
 
-
-    
     def get_comment(self):
         return f"#This filters out traces {self.parameters_to_string()}."
 
@@ -93,11 +92,10 @@ class ThroughPut(Filter):
 
     def filter(self, eventLog):
         event_a = self.parameters[0]
-        event_b= self.parameters[1]
+        event_b = self.parameters[1]
         throughputtime = self.parameters[2]
         mode = self.parameters[3]
-        
-        
+
         indicesToRemove = []
         for count, trace in enumerate(eventLog.traces):
             keep = False
@@ -122,34 +120,32 @@ class ThroughPut(Filter):
                 indicesToRemove.append(count)
         eventLog.removeTraces(indicesToRemove)
         return eventLog
-        
+
     def get_function(self, varnumber):
         return """indicesToRemove = []
-        for count, trace in enumerate(eventLog.traces):
-            keep = False
-            time_a = 0
-            for event in trace.events:
-                if event.activity == event_a{}:
-                    if mode{} == "longer":
-                        if time_a == 0:
-                            time_a = event.time
-                    else:
-                        time_a = event.time
-                elif event.activity == event_b{}:
-                    if mode{} == "longer":
-                        if (time_a != 0 and event.time - time_a > int(throughputtime)):
-                            keep = True
-                            break
-                    else:
-                        if (time_a != 0 and event.time - time_a < int(throughputtime)):
-                            keep = True
-                            break
-            if not keep:
-                indicesToRemove.append(count)
-        eventLog.removeTraces(indicesToRemove)""".format(varnumber), ["event_a{}".format(varnumber),"throughputtime{}".format(varnumber),"event_b{}".format(varnumber),"mode{}".format(varnumber)], self.parameters
+for count, trace in enumerate(eventLog.traces):
+    keep = False
+    time_a = 0
+    for event in trace.events:
+        if event.activity == event_a{}:
+            if mode{} == "longer":
+                if time_a == 0:
+                    time_a = event.time
+            else:
+                time_a = event.time
+        elif event.activity == event_b{}:
+            if mode{} == "longer":
+                if (time_a != 0 and event.time - time_a > int(throughputtime{})):
+                    keep = True
+                    break
+            else:
+                if (time_a != 0 and event.time - time_a < int(throughputtime{})):
+                    keep = True
+                    break
+    if not keep:
+        indicesToRemove.append(count)
+eventLog.removeTraces(indicesToRemove)""".format(varnumber, varnumber, varnumber, varnumber, varnumber, varnumber), ["event_a{}".format(varnumber), "throughputtime{}".format(varnumber), "event_b{}".format(varnumber), "mode{}".format(varnumber)], ["\""+self.parameters[0]+"\"", self.parameters[2], "\""+self.parameters[1]+"\"", "\""+self.parameters[3]+"\""]
 
-
-    
     def get_comment(self):
         return f"#This filters out traces based on throughput time with the following parameters: {self.parameters_to_string()}."
 
@@ -157,7 +153,6 @@ class ThroughPut(Filter):
     def generateFilter(parameters):
         return ThroughPut(parameters)
 
-        
 
 class FlowSelection(Filter):
 
@@ -175,31 +170,29 @@ class FlowSelection(Filter):
             previous_event = None
             for event in trace.events:
                 if previous_event is not None and previous_event.activity == event_a and event.activity == event_b:
-                        keep = True
-                        break
+                    keep = True
+                    break
                 previous_event = event
             if not keep:
                 indicesToRemove.append(count)
         eventLog.removeTraces(list(set(indicesToRemove)))
         return eventLog
-        
+
     def get_function(self, varnumber):
         return """indicesToRemove = []
-        for count, trace in enumerate(eventLog.traces):
-            keep = False
-            previous_event = None
-            for event in trace.events:
-                if previous_event is not None and previous_event.activity == event_a{} and event.activity == event_b{}:
-                        keep = True
-                        break
-                
-                previous_event = event
-            if not keep:
-                indicesToRemove.append(count)
-        eventLog.removeTraces(indicesToRemove)""".format(varnumber), ["event_a{}".format(varnumber),"event_b{}".format(varnumber)], self.parameters
+for count, trace in enumerate(eventLog.traces):
+    keep = False
+    previous_event = None
+    for event in trace.events:
+        if previous_event is not None and previous_event.activity == event_a{} and event.activity == event_b{}:
+                keep = True
+                break
+        
+        previous_event = event
+    if not keep:
+        indicesToRemove.append(count)
+eventLog.removeTraces(indicesToRemove)""".format(varnumber, varnumber), ["event_a{}".format(varnumber), "event_b{}".format(varnumber)], ["\""+self.parameters[0]+"\"", "\""+self.parameters[1]+"\""]
 
-
-    
     def get_comment(self):
         return f"#This filters out traces that do not have the directly follow pattern between {self.parameters[0], self.parameters[1]}."
 
@@ -222,28 +215,27 @@ class RemoveBehavior(Filter):
         sample.sort()
         seen_events = 0
         for ti, trace in enumerate(eventLog.traces):
-            sample_trace = [i for i in sample if i>=seen_events and i<seen_events + len(trace.events)]
+            sample_trace = [i for i in sample if i >=
+                            seen_events and i < seen_events + len(trace.events)]
             sample_trace = [number - seen_events for number in sample_trace]
             seen_events += len(trace.events)
             trace.removeEvents(sample_trace)
         eventLog.remove_empty_traces()
         return eventLog
-        
+
     def get_function(self, varnumber):
         return """random.seed(SEED)
-        total = eventLog.get_total_number_events()
-        sample = random.sample(range(total), int(total * float(remove{})))
-        sample.sort()
-        seen_events = 0
-        for ti, trace in enumerate(eventLog.traces):
-            sample_trace = [i for i in sample if i>=seen_events and i<seen_events + len(trace.events)]
-            sample_trace = [number - seen_events for number in sample_trace]
-            seen_events += len(trace.events)
-            trace.removeEvents(sample_trace)
-        eventLog.remove_empty_traces()""".format(varnumber), ["remove{}".format(varnumber)], self.parameters
+total = eventLog.get_total_number_events()
+sample = random.sample(range(total), int(total * float(remove{})))
+sample.sort()
+seen_events = 0
+for ti, trace in enumerate(eventLog.traces):
+    sample_trace = [i for i in sample if i>=seen_events and i<seen_events + len(trace.events)]
+    sample_trace = [number - seen_events for number in sample_trace]
+    seen_events += len(trace.events)
+    trace.removeEvents(sample_trace)
+eventLog.remove_empty_traces()""".format(varnumber), ["remove{}".format(varnumber)], self.parameters
 
-
-    
     def get_comment(self):
         return f"#This filters out {self.parameters[0]} of each trace."
 

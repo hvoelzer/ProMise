@@ -9,7 +9,8 @@ class Control():
         self.currentEventLog = EventLog()  # Maybe this is not needed
         self.graph = None
         #self.filters = self.initFilters()
-        self.filtersdict = {"filterOut": FilterOut, "flowSelection": FlowSelection, "throughPut": ThroughPut, "removeBehavior": RemoveBehavior}
+        self.filtersdict = {"filterOut": FilterOut, "flowSelection": FlowSelection,
+                            "throughPut": ThroughPut, "removeBehavior": RemoveBehavior}
 
     def loadRawfile(self, json):
         self.currentEventLog.populateTracesFromCSV(
@@ -27,7 +28,8 @@ class Control():
     def filterFromJson(self, json):  # TODO: this method could probably be written more agile
         return self.filtersdict[json["filterName"]].generateFilter(self.parse_parameters(json["activityName"]))
 
-    def filterFromJson_no_parsing(self, json):  # TODO: this method could probably be written more agile
+    # TODO: this method could probably be written more agile
+    def filterFromJson_no_parsing(self, json):
         return self.filtersdict[json["filterName"]].generateFilter(json["activityName"])
 
     # maybe the filter is going to be json format, the idea of the code should still hold
@@ -99,23 +101,23 @@ class Control():
             dep_str = d.read()
             d.close()
 
-        script = "\n\n\n\n #DEPENDENCIES:  \nfrom rawLog import rawlog\n\n " + dep_str
+        script = "\n\n\n\n #DEPENDENCIES:  \nfrom rawLog import rawlog\nimport random\n " + dep_str
         script = script + \
-            "\n\n\neventlog = EventLog()\nif (path_to_file == \"\"):\n    eventlog.populateTracesFromCSV(\nrawlog, \"{0}\", {1}, {2}, {3})\nelse:\n    eventlog.actuallyPopulateTracesFromCSV(path_to_file, timestring, timeColumn, activityColumn, traceColumn, seperator)".format(
+            "\n\n\neventLog = EventLog()\nif (path_to_file == \"\"):\n    eventLog.populateTracesFromCSV(\nrawlog, \"{0}\", {1}, {2}, {3})\nelse:\n    eventLog.actuallyPopulateTracesFromCSV(path_to_file, timestring, timeColumn, activityColumn, traceColumn, seperator)".format(
                 self.graph.logdetails["timestampformat"], self.graph.logdetails["timestampcolumn"], self.graph.logdetails["activitycolumn"], self.graph.logdetails["tracecolumn"])
 
         var_string = "#VARIABLES: \nSEED = 10\n"
         for i, filter in enumerate(history[json["id"]]):
             cmt = filter.get_comment()
             fct, vars, vals = filter.get_function(i)
+            var_string += "\n\n#Filter " + str(i) + ":"
             for j, var in enumerate(vars):
-                var_string += "\n" + var + " = " + vals[j]
+                var_string += "\n" + var + " = " + str(vals[j])
 
-            script = script + "\n" + cmt + "\n" + \
-                fct
+            script = script + "\n" + cmt + "\n" + fct
         print(script)
         script = var_string + "\n" + "# For using different eventlog (leave path_to_file empty to use original eventlog): \npath_to_file = \"\" \ntimestring = \"\"\ntimeColumn = 0\nactivityColumn = 0\ntraceColumn = 0\nseperator = \",\" \n\n\n" + script + \
-            "\neventlog.export(\"final.csv\")"
+            "\neventLog.export(\"final.csv\")"
 
         rawlog = "rawlog ={}".format(self.graph.logdetails["content"]["data"])
         with open(rawlogname, 'w') as r:
