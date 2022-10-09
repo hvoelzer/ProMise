@@ -6,7 +6,9 @@
       <br>
       <button id=historyView @click="showHistoryGraph" class="graphsButtons">History <br> Graph</button>
       <br>
-      <button id=trueView @click="showTrueGraph" class="graphsButtons">True <br> Graph</button>
+      <div v-if="withTrueGraph == 'true'">
+      <button id=trueView @click="showTrueGraph" class="graphsButtons" >True <br> Graph</button>
+      </div>
     </div>
     <div class="page">
 
@@ -20,7 +22,7 @@
 		</div>
       <svg width="100%" height="100" id="true-view" v-if="trueGraph && cleanGraph">
       </svg>
-      <svg width="100%" height="100" id="clean-graph" v-else-if="cleanGraph ">
+      <svg width="100%" height="100" id="clean-graph" v-else-if="cleanGraph">
       </svg>
       <svg width="100%" height="100" id="history-view" v-else>
       </svg>
@@ -36,12 +38,13 @@ import router from '@/router';
 
 export default {
   name: 'App',
-  props: ['selected','labelnodedict'],
+  props: ['selected','labelnodedict', 'with_true_graph'],
 
   data() {
  
 
     return {
+      withTrueGraph: this.with_true_graph,
       trueGraph: false,
       mapcleantohistory : {},
       nodelabeldict : this.labelnodedict,
@@ -77,16 +80,16 @@ export default {
       this.svgElementsToRemoveHistory = []
       this.getGraph('clean-graph',this.$backend.getGraph())
     },
-    showTrueGraph() {
-      this.trueGraph = true
-      this.cleanGraph = true
+    showHistoryGraph() {
+      this.trueGraph = false
+      this.cleanGraph = false
       this.svgElementsToRemoveClean = []
       this.svgElementsToRemoveHistory = []
       this.getGraph('history-view',this.$backend.getHistoryGraph())
     },
-    showHistoryGraph() {
-      this.trueGraph = false
-      this.cleanGraph = false
+    showTrueGraph() {
+      this.trueGraph = true
+      this.cleanGraph = true
       this.svgElementsToRemoveClean = []
       this.svgElementsToRemoveHistory = []
       this.getGraph('true-view',this.$backend.getTrueGraph())
@@ -416,7 +419,9 @@ export default {
     },
 
     drawNode(x, y, node) {
+      console.log(this.svg_id)
       var graph = document.getElementById(this.svg_id);
+      console.log(graph)
       var circle;
       var label
 
@@ -517,6 +522,14 @@ export default {
   mounted() {
     this.getGraph('clean-graph',this.$backend.getGraph());
     window.addEventListener('resize', this.drawEdges)
+  },
+  created() {
+    console.log('Params: ', this.$route.params);
+    if (this.$route.params.truedatagraph != undefined){
+
+      this.withTrueGraph = this.$route.params.truedatagraph
+      this.$emit('changewith_true_graph', this.withTrueGraph)
+    }
   }
   
 

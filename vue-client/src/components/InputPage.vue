@@ -1,58 +1,42 @@
 <template>
   <div class="centerInput">
-      <h1>IMPORT RAW EVENTLOG </h1>
-      <form v-on:submit.prevent="submitForm">
+    <h1>IMPORT RAW EVENTLOG </h1>
+    <form v-on:submit.prevent="submitForm">
       <table>
         <tr>
-        <td><label> CSV File </label></td>
-        <td><input type="file" accept=".csv" @change="handleFileUpload( $event )"/></td>
+          <td><label> CSV File </label></td>
+          <td><input type="file" accept=".csv" @change="handleFileUpload( $event )" /></td>
         </tr>
-        
+
         <tr>
-        <label> Timestamp formatting String </label>
-        <td><input
-          type="text"
-          v-model="form.timestampformat"
-          placeholder="H:M:S"
-          
-        /></td>
+          <label> Timestamp formatting String </label>
+          <td><input type="text" v-model="form.timestampformat" placeholder="H:M:S" /></td>
         </tr>
         <tr>
-        <label> Timestamp Column </label>
-        <td><input
-          type="number"
-          v-model="form.timestampcolumn"
-   
-         
-        /></td>
+          <label> Timestamp Column </label>
+          <td><input type="number" v-model="form.timestampcolumn" /></td>
         </tr>
         <tr>
-        <label> Activity Column </label>
-        <td><input
-          type="number"
-          v-model="form.activitycolumn"
-        /></td>
+          <label> Activity Column </label>
+          <td><input type="number" v-model="form.activitycolumn" /></td>
         </tr>
         <tr>
-        <label> Trace Column </label>
-        <td><input
-          type="number"
-          v-model="form.tracecolumn"
-        /></td>
+          <label> Trace Column </label>
+          <td><input type="number" v-model="form.tracecolumn" /></td>
         </tr>
         <tr>
           <label> True Data Graph </label>
-          <td><input
-            type="text"
-            v-model="form.truedatagraph"
-          /></td>
-          </tr>
-        <label>  </label>
+          <td><input type="checkbox"  v-model="form.truedatagraph" />
+            <label for="checkbox">{{ form.
+            truedatagraph }}</label>
+          </td>
+        </tr>
+        <label> </label>
         <td><button type="submit">Submit</button></td>
-        </table>
-      </form>
-      
-    </div>
+      </table>
+    </form>
+
+  </div>
 </template>
 
 <script>
@@ -65,11 +49,11 @@ export default {
   components: {
 
   },
-  data(){
+  data() {
     return {
       form: {
-        truedatagraph : "false",
-        timestampformat : "%Y-%m-%dT%H:%M:%S",
+        truedatagraph: false,
+        timestampformat: "%Y-%m-%dT%H:%M:%S",
         tracecolumn: 0,
         activitycolumn: 2,
         timestampcolumn: 1,
@@ -80,29 +64,29 @@ export default {
     }
   },
   methods: {
-    parseFile(){
-    Papa.parse( this.form.file, {
+    parseFile() {
+      Papa.parse(this.form.file, {
         header: true,
         skipEmptyLines: true,
-        complete: function( results ){
-            this.form.content = results;
-            this.form.parsed = true;
+        complete: function (results) {
+          this.form.content = results;
+          this.form.parsed = true;
         }.bind(this)
-    } );
-},
-handleFileUpload( event ){
-  this.form.file = event.target.files[0];
-  this.parseFile();
-},
-    submitForm(){
+      });
+    },
+    handleFileUpload(event) {
+      this.form.file = event.target.files[0];
+      this.parseFile();
+    },
+    submitForm() {
       try {
 
-        this.axios.post(this.$backend.getUrlData(),this.form, {headers: {"Access-Control-Allow-Origin" : "http://127.0.0.1:5000"}})
-        .then(() => {
-         
-          console.log("IMPORT SUCCEEDED");
-          router.push("/app/graph");
-        })
+        this.axios.post(this.$backend.getUrlData(), this.form, { headers: { "Access-Control-Allow-Origin": "http://127.0.0.1:5000" } })
+          .then(() => {
+
+            console.log("IMPORT SUCCEEDED");
+            router.push({name:"GraphView", params: { truedatagraph: this.form.truedatagraph}});
+          })
       }
       catch (e) {
         console.log(e);
@@ -113,21 +97,21 @@ handleFileUpload( event ){
 </script>
 
 <style>
-.centerInput{
+.centerInput {
   margin: 0px;
-  width: initial; 
+  width: initial;
   font-family: Avenir, Helvetica, Arial, sans-serif;
   padding: 8px;
 
-  max-height: calc(100% - 0px); 
-  
-  color:rgb(10, 48, 0); 
+  max-height: calc(100% - 0px);
+
+  color: rgb(10, 48, 0);
 
   display: flex;
-  flex-direction:column; 
+  flex-direction: column;
   align-items: center;
 
-  }
+}
 </style>
 
 <!-- Comment 

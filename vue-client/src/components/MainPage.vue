@@ -7,7 +7,7 @@
             <button id=filterView @click="goToFilterView" class="navigationButton filterButton" ></button>
 
         </div>
-        <router-view :selected="this.selected" @changeSelected="newSelected" :labelnodedict="this.labelnodedict" @changeDict="newLabelDict" class="page" />
+        <router-view :selected="this.selected" @changeSelected="newSelected" :labelnodedict="this.labelnodedict" @changeDict="newLabelDict" :with_true_graph="this.with_true_graph" @changewith_true_graph="newTrueGraph" class="page" />
     </div>
 </template>
 
@@ -18,7 +18,8 @@ export default {
     data() {
         return {
             labelnodedict: {},
-            selected: 0
+            selected: 0,
+            with_true_graph: false
         }
     },
     methods: {
@@ -28,13 +29,16 @@ export default {
         newSelected(id) {
             this.selected = id
         },
+        newTrueGraph(b) {
+            this.with_true_graph = b
+        },
         goToGraphView() {
             router.push("/app/graph");
         },
         goToFilterView() {
             router.push("/app/filter");
         }
-    }
+    },
 }
 </script>
 

@@ -45,8 +45,9 @@ class Control():
 
         allOperations.append(filter)
         print("Applying FIlter")
+        print("ID IN GET NODE FROM ID", id)
         self.graph.addOperation(
-            currentNode=self.graph.getNodefromId(id),
+            currentTrieNodeId=id,
             operations=allOperations,
             newEventLog=filter.filter(self.graph.getNodefromId(
                 id).eventLog.copy())
@@ -107,7 +108,7 @@ class Control():
         rawlogname = '../snapshot/rawLog.py'
         nod, ed, history = self.graph.getCleanGraphTrie(True)
 
-        dependencies = 'event_log.py'
+        dependencies = 'app/event_log.py'
 
         with open(dependencies, 'r') as d:
             dep_str = d.read()

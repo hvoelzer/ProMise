@@ -1,22 +1,6 @@
 #VARIABLES: 
 SEED = 10
 
-
-#Filter 0:
-remove0 = 0.5
-
-#Filter 1:
-filterout1 = ['Q', 'H']
-
-#Filter 2:
-event_a2 = "D"
-event_b2 = "H"
-
-#Filter 3:
-event_a3 = "D"
-throughputtime3 = 600
-event_b3 = "H"
-mode3 = "longer"
 # For using different eventlog (leave path_to_file empty to use original eventlog): 
 path_to_file = "" 
 timestring = ""
@@ -48,6 +32,9 @@ class Event:
         self.activity = activity
         self.resources = resources
         self.timestring = timestring
+    
+    def equals(self,event):
+        return (self.time == event.time) and (self.activity == event.activity) and (self.timestring == event.timestring)
 
     def __repr__(self):
         return f"Event {self.time}"
@@ -78,6 +65,12 @@ class Trace:
         self.events = []
         self.id = id
         self.timestring = timestring
+    
+    def equals(self,trace):
+        for i,event in enumerate(self.events):
+            if (not(event.equals(trace.events[i]))):
+                return False
+        return True
 
     def addEvent(self, time, activity, *resources):
         if len(self.events) == 0 or self.events[-1].time < time:
@@ -137,6 +130,12 @@ class EventLog:
     def __init__(self):
         self.traces = []
         self.timestring = ""
+
+    def equals(self,log):
+        for i,trace in enumerate(self.traces):
+            if (not(trace.equals(log.traces[i]))):
+                return False
+        return True
 
     def removeTraces(self, indices):
         for counter, index in enumerate(indices):
@@ -244,65 +243,4 @@ if (path_to_file == ""):
 rawlog, "%Y-%m-%dT%H:%M:%S", 1, 2, 0)
 else:
     eventLog.actuallyPopulateTracesFromCSV(path_to_file, timestring, timeColumn, activityColumn, traceColumn, seperator)
-#This filters out 0.5 of each trace.
-random.seed(SEED)
-total = eventLog.get_total_number_events()
-sample = random.sample(range(total), int(total * float(remove0)))
-sample.sort()
-seen_events = 0
-for ti, trace in enumerate(eventLog.traces):
-    sample_trace = [i for i in sample if i>=seen_events and i<seen_events + len(trace.events)]
-    sample_trace = [number - seen_events for number in sample_trace]
-    seen_events += len(trace.events)
-    trace.removeEvents(sample_trace)
-eventLog.remove_empty_traces()
-#This filters out traces  and Q and H.
-indicesToRemove = []
-for count, trace in enumerate(eventLog.traces):
-    bool_list = [True for _ in range(len(filterout1))]
-    for event in trace.events:
-        for i, par in enumerate(filterout1):
-            if event.activity == par:
-                bool_list[i] = False
-        if sum(bool_list) == 0:
-            indicesToRemove.append(count)
-eventLog.removeTraces(indicesToRemove)
-#This filters out traces that do not have the directly follow pattern between ('D', 'H').
-indicesToRemove = []
-for count, trace in enumerate(eventLog.traces):
-    keep = False
-    previous_event = None
-    for event in trace.events:
-        if previous_event is not None and previous_event.activity == event_a2 and event.activity == event_b2:
-                keep = True
-                break
-        
-        previous_event = event
-    if not keep:
-        indicesToRemove.append(count)
-eventLog.removeTraces(indicesToRemove)
-#This filters out traces based on throughput time with the following parameters:  and D and H and 600 and longer.
-indicesToRemove = []
-for count, trace in enumerate(eventLog.traces):
-    keep = False
-    time_a = 0
-    for event in trace.events:
-        if event.activity == event_a3:
-            if mode3 == "longer":
-                if time_a == 0:
-                    time_a = event.time
-            else:
-                time_a = event.time
-        elif event.activity == event_b3:
-            if mode3 == "longer":
-                if (time_a != 0 and event.time - time_a > int(throughputtime3)):
-                    keep = True
-                    break
-            else:
-                if (time_a != 0 and event.time - time_a < int(throughputtime3)):
-                    keep = True
-                    break
-    if not keep:
-        indicesToRemove.append(count)
-eventLog.removeTraces(indicesToRemove)
 eventLog.export("final.csv")

@@ -29,7 +29,9 @@ class Node:  # alias Log
 class Graph:
 
     def __init__(self, eventLog, truedatagraph):
-        self.truedatagraph = (truedatagraph != 'false')
+        print("truedatagraph", truedatagraph)
+        print("truedatagraph TYPE", type(truedatagraph))
+        self.truedatagraph = truedatagraph
         self.root = Node(eventLog.copy(), 0)  
         self.nodes = [self.root]
         if (self.truedatagraph):
@@ -49,9 +51,11 @@ class Graph:
 
     # Whenever a diff (filter) is created we need to generate a new node
     # [operation] or list of diff/filter that have been applied in the path
-    def addOperation(self, currentNode, newEventLog, operations):
+    def addOperation(self, currentTrieNodeId, newEventLog, operations):
         id = self.trie.search(operations)
+        currentNode = self.getNodefromId(currentTrieNodeId)
         if not id:
+            print("ID IN ADD OPERATION", currentNode.id)
 
             # NOTE is going to be a problem if we delete nodes
             newNodeNotChecked = Node(newEventLog, len(self.nodes))
@@ -73,22 +77,21 @@ class Graph:
                 self.true_graph_2_trie_graph[newTrueNode.id].append(self.nr_trie_nodes)
                 self.true_adjecency_graph[currentNode.id].append((operations[-1], newTrueNode.id))
 
-                #convert True node to Clean Node for Clean Graph:
-                trie_id = self.true_graph_2_trie_graph[currentNode.id]
-                clean_id = -1
+                #convert Trie node to Clean Node for Clean Graph:
 
                 for key in self.clean_graph_2_trie_graph:
-                    if (trie_id in self.clean_graph_2_trie_graph[key]):
+                    if (currentTrieNodeId in self.clean_graph_2_trie_graph[key]):
                         clean_id = key
 
                 self.adjecency_graph[clean_id].append(
                 (operations[-1], newNode.id))
             else:
+                
                 self.adjecency_graph[currentNode.id].append(
                 (operations[-1], newNode.id))
 
             self.nr_trie_nodes += 1
-
+            print("AG", self.adjecency_graph)
 
         else:
             print("IDi", id)
@@ -129,9 +132,6 @@ class Graph:
 
     def getNodefromId(self, id):
         if (self.truedatagraph):
-            print("MAP:",self.true_graph_2_trie_graph)
-            print("NODES",self.true_nodes)
-            print("NODE FROM ID",self.true_nodes[self.trueNodeFromTrieNode(id)])
             return self.true_nodes[self.trueNodeFromTrieNode(id)]
         return self.nodes[self.cleanNodeFromTrieNode(id)]
 
