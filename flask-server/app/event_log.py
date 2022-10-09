@@ -13,6 +13,9 @@ class Event:
         self.activity = activity
         self.resources = resources
         self.timestring = timestring
+    
+    def equals(self,event):
+        return (self.time == event.time) and (self.activity == event.activity) and (self.timestring == event.timestring)
 
     def __repr__(self):
         return f"Event {self.time}"
@@ -43,6 +46,12 @@ class Trace:
         self.events = []
         self.id = id
         self.timestring = timestring
+    
+    def equals(self,trace):
+        for i,event in enumerate(self.events):
+            if (not(event.equals(trace.events[i]))):
+                return False
+        return True
 
     def addEvent(self, time, activity, *resources):
         if len(self.events) == 0 or self.events[-1].time < time:
@@ -102,6 +111,12 @@ class EventLog:
     def __init__(self):
         self.traces = []
         self.timestring = ""
+
+    def equals(self,log):
+        for i,trace in enumerate(self.traces):
+            if (not(trace.equals(log.traces[i]))):
+                return False
+        return True
 
     def removeTraces(self, indices):
         for counter, index in enumerate(indices):

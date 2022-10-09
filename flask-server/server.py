@@ -3,7 +3,7 @@
 from flask import Flask, request, send_file
 
 from flask_cors import CORS
-from control import Control
+from app.control import Control
 
 
 control = Control()
@@ -30,6 +30,10 @@ def import_raw_data():
 @app.route("/get_graph", methods=['GET'])
 def get_graph():
     return control.getEdgesAsJson()
+
+@app.route("/get_true_graph", methods=['GET'])
+def get_true_graph():
+    return control.getEdgesAsJsonTrue()
 
 
 @app.route("/get_history_graph", methods=['GET'])

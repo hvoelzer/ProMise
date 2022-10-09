@@ -5,7 +5,8 @@
       <button id=graphView @click="showCleanGraph" class="graphsButtons">Clean <br> Graph</button>
       <br>
       <button id=historyView @click="showHistoryGraph" class="graphsButtons">History <br> Graph</button>
-
+      <br>
+      <button id=trueView @click="showTrueGraph" class="graphsButtons">True <br> Graph</button>
     </div>
     <div class="page">
 
@@ -17,7 +18,9 @@
 			<button @click="labelNode">Submit Label</button>
       <button @click="snapshot">Get Snapshot</button>
 		</div>
-      <svg width="100%" height="100" id="clean-graph" v-if="cleanGraph">
+      <svg width="100%" height="100" id="true-view" v-if="trueGraph && cleanGraph">
+      </svg>
+      <svg width="100%" height="100" id="clean-graph" v-else-if="cleanGraph ">
       </svg>
       <svg width="100%" height="100" id="history-view" v-else>
       </svg>
@@ -39,6 +42,7 @@ export default {
  
 
     return {
+      trueGraph: false,
       mapcleantohistory : {},
       nodelabeldict : this.labelnodedict,
       nodelabel : "0",
@@ -58,6 +62,7 @@ export default {
   },
   methods: {
     labelNode() {
+
       this.showPopup = false;
       this.nodelabeldict[this.popupid] = this.nodelabel;
       var label = document.getElementById("label"+this.popupid);
@@ -66,25 +71,34 @@ export default {
     },
 
     showCleanGraph() {
+      this.trueGraph = false
       this.cleanGraph = true
       this.svgElementsToRemoveClean = []
       this.svgElementsToRemoveHistory = []
-      this.getGraph()
+      this.getGraph('clean-graph',this.$backend.getGraph())
+    },
+    showTrueGraph() {
+      this.trueGraph = true
+      this.cleanGraph = true
+      this.svgElementsToRemoveClean = []
+      this.svgElementsToRemoveHistory = []
+      this.getGraph('history-view',this.$backend.getHistoryGraph())
     },
     showHistoryGraph() {
+      this.trueGraph = false
       this.cleanGraph = false
       this.svgElementsToRemoveClean = []
       this.svgElementsToRemoveHistory = []
-      this.getGraph()
+      this.getGraph('true-view',this.$backend.getTrueGraph())
     },
-    getGraph() {
+    getGraph(svg_id,fetch_from) {
       this.showPopup = false;
       try {
-        this.fetch_from = this.cleanGraph ? this.$backend.getGraph() : this.$backend.getHistoryGraph()
-        this.svg_id = this.cleanGraph ? 'clean-graph' : 'history-view'
+        this.fetch_from = fetch_from
+        this.svg_id = svg_id
         this.axios.get(this.fetch_from)
           .then((json) => {
-
+            console.log(json)
             this.edges = json.data;
             this.invertMap(this.edges.map)
             console.log(this.edges.map)
@@ -501,7 +515,7 @@ export default {
     
   },
   mounted() {
-    this.getGraph();
+    this.getGraph('clean-graph',this.$backend.getGraph());
     window.addEventListener('resize', this.drawEdges)
   }
   

@@ -14,7 +14,7 @@ class Control():
     def loadRawfile(self, json):
         self.currentEventLog.populateTracesFromCSV(
             json["content"]["data"], json["timestampformat"], json["timestampcolumn"], json["activitycolumn"], json["tracecolumn"])
-        self.graph = logs_graph.Graph(self.currentEventLog)
+        self.graph = logs_graph.Graph(self.currentEventLog,json["truedatagraph"])
 
         self.graph.logdetails = json
         print(self.currentEventLog)
@@ -44,13 +44,18 @@ class Control():
             map(self.filterFromJson_no_parsing, json["previousOperations"]))
 
         allOperations.append(filter)
-
+        print("Applying FIlter")
         self.graph.addOperation(
             currentNode=self.graph.getNodefromId(id),
             operations=allOperations,
             newEventLog=filter.filter(self.graph.getNodefromId(
                 id).eventLog.copy())
         )
+    def getEdgesAsJsonTrue(self):
+        map = self.reverseTrueGraphTrieMap()
+        print(str({"levels": self.graph.getTrueGraph(),
+              "edges": self.graph.getTrueEdges()}).replace("\'", "\""))
+        return str({"levels": self.graph.getTrueGraph(), "edges": self.graph.getTrueEdges(), "map": map}).replace("\'", "\"")
 
     def getEdgesAsJson(self):
         map = self.reverseGraphTrieMap()
@@ -60,8 +65,16 @@ class Control():
 
     def reverseGraphTrieMap(self):
         reverse = {}
-        for key in self.graph.map_trie_graph.keys():
-            for elemnt in self.graph.map_trie_graph[key]:
+        for key in self.graph.clean_graph_2_trie_graph.keys():
+            for elemnt in self.graph.clean_graph_2_trie_graph[key]:
+                st_elem = str(elemnt)
+                reverse[st_elem] = key
+        return reverse
+    
+    def reverseTrueGraphTrieMap(self):
+        reverse = {}
+        for key in self.graph.true_graph_2_trie_graph.keys():
+            for elemnt in self.graph.true_graph_2_trie_graph[key]:
                 st_elem = str(elemnt)
                 reverse[st_elem] = key
         return reverse
@@ -73,7 +86,7 @@ class Control():
             levels.append({"id": int(key), "nodes": nod[key]})
         print(str({"levels": levels,
               "edges": ed}).replace("\'", "\""))
-        print(self.graph.map_trie_graph)
+        print(self.graph.clean_graph_2_trie_graph)
         print("historys:", hist)
         map = self.reverseGraphTrieMap()
         print(map)

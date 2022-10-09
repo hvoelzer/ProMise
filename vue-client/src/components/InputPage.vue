@@ -40,6 +40,13 @@
           v-model="form.tracecolumn"
         /></td>
         </tr>
+        <tr>
+          <label> True Data Graph </label>
+          <td><input
+            type="text"
+            v-model="form.truedatagraph"
+          /></td>
+          </tr>
         <label>  </label>
         <td><button type="submit">Submit</button></td>
         </table>
@@ -61,7 +68,7 @@ export default {
   data(){
     return {
       form: {
-       
+        truedatagraph : "false",
         timestampformat : "%Y-%m-%dT%H:%M:%S",
         tracecolumn: 0,
         activitycolumn: 2,

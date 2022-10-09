@@ -21,20 +21,28 @@ class Node:  # alias Log
 
     def getDescription(self):
         return self.eventLog.getDescription()
+    
+    def equals(self,node):
+        return self.eventLog.equals(node.eventLog)
 
 
 class Graph:
 
-    def __init__(self, eventLog):
-        self.root = Node(eventLog.copy(), 0)  # maybe it is not needed
+    def __init__(self, eventLog, truedatagraph):
+        self.truedatagraph = (truedatagraph != 'false')
+        self.root = Node(eventLog.copy(), 0)  
         self.nodes = [self.root]
+        if (self.truedatagraph):
+            self.true_nodes = [self.root]
+            self.true_adjecency_graph = [[]]
+            self.true_graph_2_trie_graph = {0: [0]}
 
         self.trie = trie.Trie()
         self.adjecency_graph = [[]]
         self.lastNode = 0
 
         self.nr_trie_nodes = 1
-        self.map_trie_graph = {0: [0]}
+        self.clean_graph_2_trie_graph = {0: [0]}
 
         # I just need this info stored somewhere:
         self.logdetails = {}
@@ -47,17 +55,41 @@ class Graph:
 
             # NOTE is going to be a problem if we delete nodes
             newNodeNotChecked = Node(newEventLog, len(self.nodes))
+            
 
             # check if node already exists
             newNode = self.checkForMatch(newNodeNotChecked)
             self.trie.insert(operations, self.nr_trie_nodes)
 
-            self.map_trie_graph[newNode.id].append(self.nr_trie_nodes)
+            self.clean_graph_2_trie_graph[newNode.id].append(self.nr_trie_nodes)
 
-            self.adjecency_graph[currentNode.id].append(
-                (operations[-1], newNode.id))
             self.lastNode = self.nr_trie_nodes
+
+
+            if (self.truedatagraph):
+                newTrueNodeNotChecked = Node(newEventLog, len(self.true_nodes))
+                newTrueNode = self.checkForTrueMatch(newTrueNodeNotChecked)
+                print("THE CURRENT ID",currentNode.id)
+                self.true_graph_2_trie_graph[newTrueNode.id].append(self.nr_trie_nodes)
+                self.true_adjecency_graph[currentNode.id].append((operations[-1], newTrueNode.id))
+
+                #convert True node to Clean Node for Clean Graph:
+                trie_id = self.true_graph_2_trie_graph[currentNode.id]
+                clean_id = -1
+
+                for key in self.clean_graph_2_trie_graph:
+                    if (trie_id in self.clean_graph_2_trie_graph[key]):
+                        clean_id = key
+
+                self.adjecency_graph[clean_id].append(
+                (operations[-1], newNode.id))
+            else:
+                self.adjecency_graph[currentNode.id].append(
+                (operations[-1], newNode.id))
+
             self.nr_trie_nodes += 1
+
+
         else:
             print("IDi", id)
             self.lastNode = id
@@ -72,17 +104,35 @@ class Graph:
     def checkForMatch(self, newNode):
         for node in self.nodes:
             if node.hash == newNode.hash:
+
                 if True:  # TODO here we need a further check, maybe done line by line in each trace between the two eventlogs
 
                     return node
         # if node does not match with any other node, add an entry to node list and adjacency graph
         self.nodes.append(newNode)
         self.adjecency_graph.append([])
-        self.map_trie_graph[newNode.id] = []
+        self.clean_graph_2_trie_graph[newNode.id] = []
+        return newNode
+
+    def checkForTrueMatch(self, newNode):
+        for node in self.true_nodes:
+            if node.hash == newNode.hash:
+
+                if (node.equals(newNode)):
+
+                    return node
+        # if node does not match with any other node, add an entry to node list and adjacency graph
+        self.true_nodes.append(newNode)
+        self.true_adjecency_graph.append([])
+        self.true_graph_2_trie_graph[newNode.id] = []
         return newNode
 
     def getNodefromId(self, id):
-
+        if (self.truedatagraph):
+            print("MAP:",self.true_graph_2_trie_graph)
+            print("NODES",self.true_nodes)
+            print("NODE FROM ID",self.true_nodes[self.trueNodeFromTrieNode(id)])
+            return self.true_nodes[self.trueNodeFromTrieNode(id)]
         return self.nodes[self.cleanNodeFromTrieNode(id)]
 
     def getEdges(self):
@@ -92,6 +142,34 @@ class Graph:
                 result.append({"parentNode": node_id,
                               "childrenNode": next_node_id, "operation": operation.getName()})
         return result
+    
+    def getTrueEdges(self):
+        result = []
+        print("TRUE GRAPH",self.true_adjecency_graph)
+        for node_id, next_nodes in enumerate(self.true_adjecency_graph):
+            for (operation, next_node_id) in next_nodes:
+                result.append({"parentNode": node_id,
+                              "childrenNode": next_node_id, "operation": operation.getName()})
+        return result
+
+    def getTrueGraph(self):
+        result = [{"id": 0, "nodes": [{"id": 0, "description" : self.true_nodes[0].getDescription()}]}]
+        self.getTrueGraphRecursive(1, [0], [0], result)
+        return result
+
+    def getTrueGraphRecursive(self, level, alradyScoutedNodes, nodesFromPreviousLayer, result):
+        nodes = []
+        nodesForNextLayer = []
+        for previousNode in nodesFromPreviousLayer:
+            for operation, node in self.true_adjecency_graph[previousNode]:
+                if node not in alradyScoutedNodes:
+                    nodes.append({"id": node, "description" : self.true_nodes[node].getDescription()})
+                    alradyScoutedNodes.append(node)
+                    nodesForNextLayer.append(node)
+        if len(nodes) > 0:
+            result.append({"id": level, "nodes": nodes})
+            self.getTrueGraphRecursive(
+                level + 1, alradyScoutedNodes, nodesForNextLayer, result)
 
     def getCleanGraph(self):
         result = [{"id": 0, "nodes": [{"id": 0, "description" : self.nodes[0].getDescription()}]}]
@@ -145,7 +223,14 @@ class Graph:
 
     def cleanNodeFromTrieNode(self, trieNodeId):
 
-        for key in self.map_trie_graph.keys():
+        for key in self.clean_graph_2_trie_graph.keys():
 
-            if trieNodeId in self.map_trie_graph[key]:
+            if trieNodeId in self.clean_graph_2_trie_graph[key]:
+                return key
+    
+    def trueNodeFromTrieNode(self, trueNodeId):
+
+        for key in self.true_graph_2_trie_graph.keys():
+
+            if trueNodeId in self.true_graph_2_trie_graph[key]:
                 return key
