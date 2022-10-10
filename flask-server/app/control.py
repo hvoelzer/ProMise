@@ -104,8 +104,8 @@ class Control():
         self.graph.lastNode = json["id"]
 
     def create_snapshot(self, json):
-        fname = '../snapshot/snapshot.py'
-        rawlogname = '../snapshot/rawLog.py'
+        fname = 'snapshot.py'
+        rawlogname = 'rawLog.py'
         nod, ed, history = self.graph.getCleanGraphTrie(True)
 
         dependencies = 'app/event_log.py'

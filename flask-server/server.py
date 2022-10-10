@@ -78,13 +78,13 @@ def create_snapshot():
 
 @app.route("/downloadsnapshot")
 def downloadfile():
-    path = "../snapshot/snapshot.py"
+    path = "snapshot.py"
     return send_file(path, as_attachment=True)
 
 
 @app.route("/downloadrawlog")
 def downloadrawlog():
-    path = "../snapshot/rawLog.py"
+    path = "rawLog.py"
     return send_file(path, as_attachment=True)
 
 
