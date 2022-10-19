@@ -11,10 +11,14 @@
         <tr>
           <label> Timestamp formatting String </label>
           <td><input type="text" v-model="form.timestampformat" placeholder="H:M:S" /></td>
+          <td>
+            <input type="button" onclick="location.href='https://pynative.com/python-datetime-format-strftime/#:~:text=Use%20datetime.,hh%3Amm%3Ass%20format.';" value="How to set timestamp string" />
+          </td>
         </tr>
         <tr>
           <label> Timestamp Column </label>
           <td><input type="number" v-model="form.timestampcolumn" /></td>
+          <td>All indexes start from 0. E.g. if the second column in you log holds timestamps, use index 1.</td>
         </tr>
         <tr>
           <label> Activity Column </label>
@@ -30,6 +34,7 @@
             <label for="checkbox">{{ form.
             truedatagraph }}</label>
           </td>
+          <td>We are using an abstraction layer to determine whether two logs are equal. If you want to see if logs are equal without abstraction, tick this box.</td>
         </tr>
         <label> </label>
         <td><button type="submit">Submit</button></td>
@@ -83,9 +88,16 @@ export default {
 
         this.axios.post(this.$backend.getUrlData(), this.form, { headers: { "Access-Control-Allow-Origin": "http://127.0.0.1:5000" } })
           .then(() => {
-
+            
             console.log("IMPORT SUCCEEDED");
             router.push({name:"GraphView", params: { truedatagraph: this.form.truedatagraph}});
+          })
+          .catch((reason) => {
+            if (reason.response.status === 402) {
+              alert("Timestamp or Timestamp column wrong")
+            } else {
+              alert("Something went wrong")
+            }
           })
       }
       catch (e) {

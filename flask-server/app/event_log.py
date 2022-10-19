@@ -13,8 +13,8 @@ class Event:
         self.activity = activity
         self.resources = resources
         self.timestring = timestring
-    
-    def equals(self,event):
+
+    def equals(self, event):
         return (self.time == event.time) and (self.activity == event.activity) and (self.timestring == event.timestring)
 
     def __repr__(self):
@@ -46,9 +46,9 @@ class Trace:
         self.events = []
         self.id = id
         self.timestring = timestring
-    
-    def equals(self,trace):
-        for i,event in enumerate(self.events):
+
+    def equals(self, trace):
+        for i, event in enumerate(self.events):
             if (not(event.equals(trace.events[i]))):
                 return False
         return True
@@ -112,8 +112,8 @@ class EventLog:
         self.traces = []
         self.timestring = ""
 
-    def equals(self,log):
-        for i,trace in enumerate(self.traces):
+    def equals(self, log):
+        for i, trace in enumerate(self.traces):
             if (not(trace.equals(log.traces[i]))):
                 return False
         return True
@@ -157,9 +157,13 @@ class EventLog:
                     event[list(event.keys())[traceColumn]])
                 if not traceIsPresent:
                     self.traces.append(trace)
+                try:
+                    time = self.convert_to_seconds(
+                        event[list(event.keys())[timeColumn]], timestring, 19)  # time in seconds
+                except:
+                    raise ValueError
                 trace.addEvent(
-                    self.convert_to_seconds(
-                        event[list(event.keys())[timeColumn]], timestring, 19),  # time in seconds
+                    time,
                     event[list(event.keys())[activityColumn]])
         # activity
         # extra resources need to be added
@@ -177,9 +181,14 @@ class EventLog:
                             event[traceColumn])
                         if not traceIsPresent:
                             self.traces.append(trace)
+
+                        try:
+                            time = self.convert_to_seconds(
+                                event[timeColumn], timestring, 19)
+                        except:
+                            raise ValueError
                         trace.addEvent(
-                            self.convert_to_seconds(
-                                event[timeColumn], timestring, 19),  # time in seconds
+                            time,  # time in seconds
                             event[activityColumn])  # activity
                         # extra resources need to be added
 

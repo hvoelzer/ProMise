@@ -4,18 +4,20 @@
 
 - Clone repo
 
-- Inside repo run command 
-    - First time
+- Inside repo run command
 
-        docker-compose up --build
+  - First time
 
-    - Otherwise
+    docker-compose up --build
 
-        docker-compose up
-    
+  - Otherwise
+
+    docker-compose up
+
+- Open a Browser of you choice (we recommend Google Chrome)
+  - Access http://localhost:8080/ and start using the application.
 - After exit (^C)
-    - docker-compose down 
-
+  - docker-compose down
 
 ### REMARKS OR BUGS
 
@@ -28,16 +30,18 @@
 ### EXAMPLE FILTER INPUTS
 
 - Filter Out
-    - A
-    - A;B
+
+  - A
+  - A;B
 
 - Flow Slection
-    - A;B
 
-- Throughput 
-    - A;B;3600;longer
-    - A;B;3600;shorter
+  - A;B
+
+- Throughput
+
+  - A;B;3600;longer
+  - A;B;3600;shorter
 
 - Remove Behavior
-    - 0.8
-
+  - 0.8

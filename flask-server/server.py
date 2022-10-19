@@ -20,8 +20,12 @@ def home():
 @app.route("/import_raw_data", methods=['POST'])
 def import_raw_data():
     file = request.get_json()
-    control.loadRawfile(file)
-
+    try:
+        control.loadRawfile(file)
+    except ValueError:
+        return "Fail", 402
+    except:
+        return "Fail", 400
     print("done")
 
     return "Done", 201
@@ -30,6 +34,7 @@ def import_raw_data():
 @app.route("/get_graph", methods=['GET'])
 def get_graph():
     return control.getEdgesAsJson()
+
 
 @app.route("/get_true_graph", methods=['GET'])
 def get_true_graph():
