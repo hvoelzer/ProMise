@@ -2,6 +2,7 @@ import app.event_log as event_log
 import app.logs_graph as logs_graph
 import app.filter_class as filter_class
 
+
 class Control():
 
     def __init__(self):
@@ -12,9 +13,11 @@ class Control():
                             "throughPut": filter_class.ThroughPut, "removeBehavior": filter_class.RemoveBehavior}
 
     def loadRawfile(self, json):
-        self.currentEventLog.populateTracesFromCSV(
-            json["content"]["data"], json["timestampformat"], json["timestampcolumn"], json["activitycolumn"], json["tracecolumn"])
-        self.graph = logs_graph.Graph(self.currentEventLog,json["truedatagraph"])
+        print("HERE", json)
+        self.currentEventLog.actuallyPopulateTracesFromCSV(
+            json["file"], json["timestampformat"], json["timestampcolumn"], json["activitycolumn"], json["tracecolumn"], ',')
+        self.graph = logs_graph.Graph(
+            self.currentEventLog, json["truedatagraph"])
 
         self.graph.logdetails = json
         print(self.currentEventLog)
@@ -52,6 +55,7 @@ class Control():
             newEventLog=filter.filter(self.graph.getNodefromId(
                 id).eventLog.copy())
         )
+
     def getEdgesAsJsonTrue(self):
         map = self.reverseTrueGraphTrieMap()
         print(str({"levels": self.graph.getTrueGraph(),
@@ -71,7 +75,7 @@ class Control():
                 st_elem = str(elemnt)
                 reverse[st_elem] = key
         return reverse
-    
+
     def reverseTrueGraphTrieMap(self):
         reverse = {}
         for key in self.graph.true_graph_2_trie_graph.keys():
