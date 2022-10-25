@@ -1,6 +1,7 @@
 
 import datetime
 import csv
+import app.trie as trie
 
 
 def convert_back_to_string(time, time_string):
@@ -111,6 +112,7 @@ class EventLog:
     def __init__(self):
         self.traces = []
         self.timestring = ""
+        self.tracetrie = trie.Trie()
 
     def equals(self, log):
         for i, trace in enumerate(self.traces):
@@ -151,20 +153,28 @@ class EventLog:
     def populateTracesFromCSV(self, csvFile, timestring, timeColumn, activityColumn, traceColumn):
         self.traces = []
         self.timestring = timestring
+        i = 0
+        traceName = list(csvFile[1].keys())[traceColumn]
+        timeName = list(csvFile[1].keys())[timeColumn]
+        activityName = list(csvFile[1].keys())[activityColumn]
         for event in csvFile:
-            if event[list(event.keys())[traceColumn]] != "":  # filter out empty lines
-                traceIsPresent, trace = self.traceAlreadyPresent(
-                    event[list(event.keys())[traceColumn]])
+            i += 1
+
+            if event[traceName] != "":  # filter out empty lines
+                newTrace = Trace(id, self.timestring)
+                traceIsPresent, trace = self.tracetrie.getElement(
+                    event[traceName], newTrace)
                 if not traceIsPresent:
                     self.traces.append(trace)
+                    self.tracetrie.insert(event[traceName], trace)
                 try:
                     time = self.convert_to_seconds(
-                        event[list(event.keys())[timeColumn]], timestring, 19)  # time in seconds
+                        event[timeName], timestring, 19)  # time in seconds
                 except:
                     raise ValueError
                 trace.addEvent(
                     time,
-                    event[list(event.keys())[activityColumn]])
+                    event[activityName])
         # activity
         # extra resources need to be added
 

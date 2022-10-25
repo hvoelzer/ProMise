@@ -4,7 +4,7 @@ class Trie(object):
         self.child = {"#": 0}
 
     def insert(self, operations, new_id):
-        print("Operations", operations)
+
         current = self.child
         for operation in operations:
             if operation not in current:
@@ -27,6 +27,14 @@ class Trie(object):
                 return False
             current = current[l]
         return True
+
+    def getElement(self, prefix, ret):
+        current = self.child
+        for l in prefix:
+            if l not in current:
+                return False, ret
+            current = current[l]
+        return True, current["#"]
 
     def __repr__(self) -> str:
         return str(self.child)

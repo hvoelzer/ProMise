@@ -69,6 +69,7 @@ export default {
     }
   },
   methods: {
+    
     parseFile() {
       Papa.parse(this.form.file, {
         header: true,
@@ -82,6 +83,8 @@ export default {
     handleFileUpload(event) {
       this.form.file = event.target.files[0];
       this.parseFile();
+      console.log("FILE PARSED");
+      setTimeout(function () { this.submitForm() }.bind(this), 30000)
     },
     submitForm() {
       try {
