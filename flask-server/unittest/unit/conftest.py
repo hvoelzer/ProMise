@@ -1,8 +1,9 @@
 import pytest
 
 
-import src.app.controller.control as control
+import app.control as control
 
 @pytest.fixture
 def example_control():
-    return control.Control()
+    c = control.Control()
+    return c

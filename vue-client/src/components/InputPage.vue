@@ -62,7 +62,7 @@ export default {
         tracecolumn: 0,
         activitycolumn: 2,
         timestampcolumn: 1,
-        file: '',
+        file: "",
         content: [],
         parsed: false
       }
@@ -80,14 +80,13 @@ export default {
       });
     },
     handleFileUpload(event) {
-      console.log(event.target.files[0])
       this.form.file = event.target.files[0];
-      console.log(this.form.file)
-      // this.parseFile();
+      this.parseFile();
     },
     submitForm() {
       try {
-        this.axios.post(this.$backend.getUrlData(), this.form, { headers: { "Access-Control-Allow-Origin": "http://127.0.0.1:5000", "Content-Type": "multipart/form-data" } })
+        console.log(this.form.file)
+        this.axios.post(this.$backend.getUrlData(), this.form, { headers: { "Access-Control-Allow-Origin": "http://127.0.0.1:5000"} })
           .then(() => {
             
             console.log("IMPORT SUCCEEDED");

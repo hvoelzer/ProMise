@@ -13,11 +13,9 @@ class Control():
                             "throughPut": filter_class.ThroughPut, "removeBehavior": filter_class.RemoveBehavior}
 
     def loadRawfile(self, json):
-        print("HERE", json)
-        self.currentEventLog.actuallyPopulateTracesFromCSV(
-            json["file"], json["timestampformat"], json["timestampcolumn"], json["activitycolumn"], json["tracecolumn"], ',')
-        self.graph = logs_graph.Graph(
-            self.currentEventLog, json["truedatagraph"])
+        self.currentEventLog.populateTracesFromCSV(
+            json["content"]["data"], json["timestampformat"], json["timestampcolumn"], json["activitycolumn"], json["tracecolumn"])
+        self.graph = logs_graph.Graph(self.currentEventLog,json["truedatagraph"])
 
         self.graph.logdetails = json
         print(self.currentEventLog)

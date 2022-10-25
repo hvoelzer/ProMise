@@ -8,7 +8,7 @@ from app.control import Control
 
 control = Control()
 app = Flask(__name__)
-CORS(app)
+CORS(app,  origins=['http://127.0.0.1:8080'])
 # Members API Route
 
 
@@ -20,13 +20,7 @@ def home():
 @app.route("/import_raw_data", methods=['POST'])
 def import_raw_data():
     file = request.get_json()
-    try:
-        control.loadRawfile(file)
-    except ValueError:
-        return "Fail", 402
-    except:
-        return "Fail", 400
-    print("done")
+    control.loadRawfile(file)
 
     return "Done", 201
 
