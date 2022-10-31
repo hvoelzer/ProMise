@@ -161,9 +161,10 @@ class EventLog:
             i += 1
 
             if event[traceName] != "":  # filter out empty lines
-                newTrace = Trace(id, self.timestring)
+                newTrace = Trace(event[traceName], self.timestring)
                 traceIsPresent, trace = self.tracetrie.getElement(
                     event[traceName], newTrace)
+                
                 if not traceIsPresent:
                     self.traces.append(trace)
                     self.tracetrie.insert(event[traceName], trace)

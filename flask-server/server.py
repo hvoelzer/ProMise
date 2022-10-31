@@ -21,7 +21,6 @@ def home():
 @app.route("/import_raw_data", methods=['POST'])
 def import_raw_data():
     file = request.get_json()
-    print("GOT THE DATA")
     control.loadRawfile(file)
 
     return "Done", 201
@@ -45,6 +44,7 @@ def get_history_graph():
 @app.route("/filter", methods=['POST'])
 def filter():
     filter = request.get_json()
+    print(filter)
     control.applyFilter(filter)
 
     print("done")
@@ -90,4 +90,4 @@ def downloadrawlog():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False)

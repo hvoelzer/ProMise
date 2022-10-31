@@ -6,10 +6,13 @@ class Trie(object):
     def insert(self, operations, new_id):
 
         current = self.child
-        for operation in operations:
+        for n, operation in enumerate(operations):
             if operation not in current:
-                current[operation] = {"#": new_id}
-                break
+                if n == len(operations) - 1:
+                    current[operation] = {"#": new_id}
+                    break
+                else:
+                    current[operation] = {}
             current = current[operation]
 
     def search(self, operations):

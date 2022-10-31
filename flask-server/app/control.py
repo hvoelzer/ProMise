@@ -35,7 +35,6 @@ class Control():
 
     # maybe the filter is going to be json format, the idea of the code should still hold
     def applyFilter(self, json):
-        print(json)
         # something else  json with id: , filtertype:, parater:,
         # get id of node to be filtered
         id = json["id"]
@@ -46,8 +45,6 @@ class Control():
             map(self.filterFromJson_no_parsing, json["previousOperations"]))
 
         allOperations.append(filter)
-        print("Applying FIlter")
-        print("ID IN GET NODE FROM ID", id)
         self.graph.addOperation(
             currentTrieNodeId=id,
             operations=allOperations,

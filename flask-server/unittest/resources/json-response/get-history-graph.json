@@ -1,0 +1,43 @@
+{
+    "levels": [
+        {
+            "id": 0,
+            "nodes": [
+                {
+                    "id": 0,
+                    "description": "cases: 2, events:13"
+                }
+            ]
+        },
+        {
+            "id": 1,
+            "nodes": [
+                {
+                    "id": 1,
+                    "description": "cases: 0, events:0"
+                },
+                {
+                    "id": 2,
+                    "description": "cases: 0, events:0"
+                }
+            ]
+        }
+    ],
+    "edges": [
+        {
+            "parentNode": 0,
+            "childrenNode": 1,
+            "operation": "filterOut H F"
+        },
+        {
+            "parentNode": 0,
+            "childrenNode": 2,
+            "operation": "removeBehavior 1"
+        }
+    ],
+    "map": {
+        "0": 0,
+        "1": 1,
+        "2": 1
+    }
+}
