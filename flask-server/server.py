@@ -14,7 +14,7 @@ CORS(app,  origins=['http://127.0.0.1:8080'])
 
 @app.route("/")
 def home():
-    return "Home"
+    return "paper"
 
 
 @app.route("/import_raw_data", methods=['POST'])
