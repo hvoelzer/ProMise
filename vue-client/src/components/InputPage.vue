@@ -89,7 +89,7 @@ export default {
     submitForm() {
       try {
         console.log(this.form.file)
-        this.axios.post(this.$backend.getUrlData(), this.form, { headers: { "Access-Control-Allow-Origin": "http://127.0.0.1:5000"} })
+        this.axios.post(this.$backend.getUrlData(), this.form )
           .then(() => {
             
             console.log("IMPORT SUCCEEDED");

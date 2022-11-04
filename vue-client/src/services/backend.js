@@ -1,7 +1,7 @@
 export default class Backend{
 
     constructor(){
-        this.url = "http://127.0.0.1:5000"
+        this.url = "https://process-mining2023.herokuapp.com:5000"
     }
 
     getUrlData(){

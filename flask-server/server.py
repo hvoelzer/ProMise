@@ -4,6 +4,7 @@ from flask import Flask, request, send_file
 
 from flask_cors import CORS
 from app.control import Control
+import os
 
 
 control = Control()
@@ -90,4 +91,6 @@ def downloadrawlog():
 
 
 if __name__ == "__main__":
-    app.run(debug=False)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(debug=True, host='0.0.0.0', port=port)
+
